@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -32,15 +32,19 @@ import {
   CalendarIcon, 
   User,
   CheckCircle2,
-  CreditCard
+  CreditCard,
+  Loader2
 } from 'lucide-react';
 import { rooms } from '@/data/roomData';
 import { format } from 'date-fns';
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 const BookingFlow = () => {
   const navigate = useNavigate();
   const { roomId } = useParams();
   const selectedRoom = rooms.find(room => room.id === roomId);
+  const { user } = useAuth();
   
   // Booking steps
   const [currentStep, setCurrentStep] = useState(1);
@@ -55,6 +59,51 @@ const BookingFlow = () => {
   const [phone, setPhone] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   
+  // UI State
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
+  
+  // Fetch unavailable dates for this room
+  useEffect(() => {
+    if (!roomId) return;
+    
+    const fetchUnavailableDates = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('reservations')
+          .select('check_in, check_out')
+          .eq('room_id', roomId)
+          .eq('status', 'confirmed');
+          
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          // Convert reservation dates to array of unavailable dates
+          const blockedDates: Date[] = [];
+          
+          data.forEach(reservation => {
+            const checkIn = new Date(reservation.check_in);
+            const checkOut = new Date(reservation.check_out);
+            
+            // Block all dates between check-in and check-out
+            const currentDate = new Date(checkIn);
+            while (currentDate <= checkOut) {
+              blockedDates.push(new Date(currentDate));
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+          });
+          
+          setUnavailableDates(blockedDates);
+        }
+      } catch (error) {
+        console.error('Error fetching unavailable dates:', error);
+        toast.error('Failed to load availability data');
+      }
+    };
+    
+    fetchUnavailableDates();
+  }, [roomId]);
+  
   // Calculate total nights and price
   const calculateNights = () => {
     if (!checkInDate || !checkOutDate) return 0;
@@ -66,6 +115,15 @@ const BookingFlow = () => {
   const calculateTotalPrice = () => {
     const nights = calculateNights();
     return nights * (selectedRoom?.price || 0);
+  };
+  
+  // Check if a date is already booked
+  const isDateUnavailable = (date: Date) => {
+    return unavailableDates.some(unavailableDate => 
+      unavailableDate.getDate() === date.getDate() &&
+      unavailableDate.getMonth() === date.getMonth() &&
+      unavailableDate.getFullYear() === date.getFullYear()
+    );
   };
   
   // Handle next step
@@ -95,14 +153,76 @@ const BookingFlow = () => {
   };
   
   // Handle booking confirmation
-  const confirmBooking = () => {
-    toast.info("This is a demo. Your booking would be processed with Supabase here.");
+  const confirmBooking = async () => {
+    if (!user || !selectedRoom || !checkInDate || !checkOutDate) {
+      toast.error("Missing required information");
+      return;
+    }
     
-    // Simulate successful booking
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 2000);
+    setIsSubmitting(true);
+    
+    try {
+      // Format dates in ISO format for DB storage
+      const checkIn = checkInDate.toISOString().split('T')[0];
+      const checkOut = checkOutDate.toISOString().split('T')[0];
+      
+      // Create reservation in Supabase
+      const { data, error } = await supabase
+        .from('reservations')
+        .insert({
+          user_id: user.id,
+          room_id: selectedRoom.id,
+          room_name: selectedRoom.name,
+          check_in: checkIn,
+          check_out: checkOut,
+          guests: parseInt(guests),
+          total_price: calculateTotalPrice(),
+          status: 'confirmed'
+        })
+        .select();
+      
+      if (error) throw error;
+      
+      toast.success("Booking confirmed successfully!");
+      setTimeout(() => {
+        navigate('/reservations');
+      }, 1500);
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      toast.error("Failed to confirm booking. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+  
+  // Pre-populate user data from Supabase profile if available
+  useEffect(() => {
+    if (!user) return;
+    
+    const fetchUserProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) throw error;
+        
+        if (data) {
+          if (data.first_name) setFirstName(data.first_name);
+          if (data.last_name) setLastName(data.last_name);
+        }
+        
+        // Always set email from auth
+        if (user.email) setEmail(user.email);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
   
   if (!selectedRoom) {
     return (
@@ -221,7 +341,11 @@ const BookingFlow = () => {
                                 mode="single"
                                 selected={checkInDate}
                                 onSelect={setCheckInDate}
-                                disabled={(date) => date < new Date()}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  return date < today || isDateUnavailable(date);
+                                }}
                                 initialFocus
                                 className="p-3 pointer-events-auto"
                               />
@@ -250,7 +374,12 @@ const BookingFlow = () => {
                                 mode="single"
                                 selected={checkOutDate}
                                 onSelect={setCheckOutDate}
-                                disabled={(date) => date < (checkInDate || new Date())}
+                                disabled={(date) => {
+                                  // Disable dates before selected check-in date
+                                  // or dates that are already booked
+                                  return date < (checkInDate || new Date()) || 
+                                         isDateUnavailable(date);
+                                }}
                                 initialFocus
                                 className="p-3 pointer-events-auto"
                               />
@@ -415,6 +544,7 @@ const BookingFlow = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => setCurrentStep(currentStep - 1)}
+                      disabled={isSubmitting}
                     >
                       Back
                     </Button>
@@ -425,9 +555,22 @@ const BookingFlow = () => {
                       Continue
                     </Button>
                   ) : (
-                    <Button onClick={confirmBooking} className="bg-accent hover:bg-accent/90">
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Confirm Booking
+                    <Button 
+                      onClick={confirmBooking} 
+                      className="bg-accent hover:bg-accent/90"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          Confirm Booking
+                        </>
+                      )}
                     </Button>
                   )}
                 </CardFooter>

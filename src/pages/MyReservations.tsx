@@ -215,7 +215,7 @@ const MyReservations = () => {
                               <TableCell className="text-right">
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
-                                    <Button variant="destructive" size="sm">
+                                    <Button variant="destructive" size="sm" disabled={cancelling === reservation.id}>
                                       {cancelling === reservation.id ? (
                                         <Loader2 className="h-4 w-4 animate-spin" />
                                       ) : (
