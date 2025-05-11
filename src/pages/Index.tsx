@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -34,7 +33,7 @@ const Index = () => {
                   <Button size="lg" className="w-full sm:w-auto">Browse Rooms</Button>
                 </Link>
                 <Link to="/booking" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 w-full sm:w-auto text-zinc-950">
                     Book Now
                   </Button>
                 </Link>
