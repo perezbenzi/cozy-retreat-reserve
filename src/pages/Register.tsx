@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -10,6 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Function to check if we're in production
 const isProduction = (): boolean => {
@@ -44,6 +47,12 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Disable authentication functionality per client request
+    toast.info("Authentication is temporarily disabled");
+    return;
+    
+    // The code below is preserved but currently unreachable
     if (password !== confirmPassword) {
       toast.error("Passwords don't match");
       return;
@@ -71,14 +80,22 @@ const Register = () => {
       setIsLoading(false);
     }
   };
+  
   const handleGoogleLogin = async () => {
+    // Disable authentication functionality per client request
+    toast.info("Authentication is temporarily disabled");
+    return;
+    
+    // The code below is preserved but currently unreachable
     try {
       await signInWithGoogle();
     } catch (error: any) {
       toast.error(error.message || "An error occurred with Google login");
     }
   };
-  return <>
+  
+  return (
+    <>
       <Navbar />
       
       <main className="mt-16 flex items-center justify-center min-h-[calc(100vh-8rem)] py-12 bg-secondary/50">
@@ -91,35 +108,43 @@ const Register = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Authentication Disabled</AlertTitle>
+                <AlertDescription>
+                  Registration is temporarily disabled. Please check back later.
+                </AlertDescription>
+              </Alert>
+              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" required value={firstName} onChange={e => setFirstName(e.target.value)} />
+                    <Input id="firstName" placeholder="John" required value={firstName} onChange={e => setFirstName(e.target.value)} disabled={true} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" required value={lastName} onChange={e => setLastName(e.target.value)} />
+                    <Input id="lastName" placeholder="Doe" required value={lastName} onChange={e => setLastName(e.target.value)} disabled={true} />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
+                  <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={e => setEmail(e.target.value)} disabled={true} />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} />
+                  <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} disabled={true} />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" placeholder="••••••••" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                  <Input id="confirmPassword" type="password" placeholder="••••••••" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} disabled={true} />
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={checked => setAgreeTerms(checked as boolean)} />
+                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={checked => setAgreeTerms(checked as boolean)} disabled={true} />
                   <label htmlFor="terms" className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     I agree to the{" "}
                     <Link to="/terms" className="text-accent hover:underline">
@@ -132,7 +157,7 @@ const Register = () => {
                   </label>
                 </div>
                 
-                <Button type="submit" className="w-full" disabled={isLoading || !agreeTerms}>
+                <Button type="submit" className="w-full" disabled={true}>
                   {isLoading ? 'Creating account...' : 'Sign up'}
                 </Button>
               </form>
@@ -149,7 +174,13 @@ const Register = () => {
               </div>
               
               <div className="grid grid-cols-1 gap-4 mt-4">
-                <Button variant="outline" type="button" className="w-full flex items-center justify-center gap-2" onClick={handleGoogleLogin}>
+                <Button 
+                  variant="outline" 
+                  type="button" 
+                  className="w-full flex items-center justify-center gap-2" 
+                  onClick={handleGoogleLogin}
+                  disabled={true}
+                >
                   <FcGoogle className="h-5 w-5" /> Sign up with Google
                 </Button>
               </div>
@@ -167,6 +198,8 @@ const Register = () => {
       </main>
       
       <Footer />
-    </>;
+    </>
+  );
 };
+
 export default Register;

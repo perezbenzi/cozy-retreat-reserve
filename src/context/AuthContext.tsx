@@ -24,30 +24,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Authentication is disabled per client request
+    // Still setting up the session listener to maintain code structure
+    // but we'll ignore any auth events
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        if (event === 'SIGNED_IN') {
-          toast.success("Successfully signed in!");
-          navigate('/');
-        }
-        
-        if (event === 'SIGNED_OUT') {
-          toast.info("You've been signed out");
-          navigate('/login');
-        }
+        // While authentication is disabled, we won't update state based on auth events
+        // This effectively prevents any login/logout functionality
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setLoading(false);
-    });
+    // Initialize with no user/session
+    setUser(null);
+    setSession(null);
+    setLoading(false);
 
     return () => {
       subscription.unsubscribe();
@@ -55,40 +46,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [navigate]);
 
   const signUp = async (email: string, password: string, metadata?: { firstName?: string, lastName?: string }) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: metadata?.firstName || '',
-          last_name: metadata?.lastName || ''
-        }
-      }
-    });
-
-    return { error };
+    // Authentication disabled per client request
+    console.log("Sign up attempt blocked - authentication disabled");
+    return { error: { message: "Authentication is temporarily disabled" } };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    return { error };
+    // Authentication disabled per client request
+    console.log("Sign in attempt blocked - authentication disabled");
+    return { error: { message: "Authentication is temporarily disabled" } };
   };
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin
-      }
-    });
+    // Authentication disabled per client request
+    console.log("Google sign in attempt blocked - authentication disabled");
+    toast.info("Authentication is temporarily disabled");
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Authentication disabled per client request
+    console.log("Sign out attempt blocked - authentication disabled");
+    toast.info("Authentication is temporarily disabled");
   };
 
   const value = {

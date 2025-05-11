@@ -109,28 +109,11 @@ const Navbar = () => {
             </Link>
           </div>
           
+          {/* Authentication buttons - replaced with disabled info */}
           <div className="flex pt-4 border-t border-border">
-            {user ? (
-              <div className="w-full">
-                <Link to="/dashboard" className="block w-full" onClick={closeMenu}>
-                  <Button variant="outline" className="w-full mb-2">Dashboard</Button>
-                </Link>
-                <Link to="/account" className="block w-full" onClick={closeMenu}>
-                  <Button variant="outline" className="w-full">Account</Button>
-                </Link>
-              </div>
-            ) : (
-              <>
-                <Link to="/login" className="flex-1">
-                  <Button variant="outline" className="w-full" onClick={closeMenu}>Log In</Button>
-                </Link>
-                {!isProduction() && (
-                  <Link to="/register" className="flex-1 ml-2">
-                    <Button className="w-full" onClick={closeMenu}>Sign Up</Button>
-                  </Link>
-                )}
-              </>
-            )}
+            <div className="w-full text-center text-sm text-muted-foreground py-2">
+              Authentication temporarily disabled
+            </div>
           </div>
         </div>
       )}
