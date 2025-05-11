@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Card, 
   CardContent, 
@@ -23,7 +24,13 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { signIn, signInWithGoogle, user } = useAuth();
+  const { 
+    signIn, 
+    signInWithGoogle, 
+    user, 
+    isEmailVerificationRequired,
+    setIsEmailVerificationRequired 
+  } = useAuth();
   
   // Redirect if already logged in
   if (user) {
@@ -99,6 +106,22 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+                
+                {/* Development mode toggle for email verification */}
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="verification" 
+                    checked={isEmailVerificationRequired}
+                    onCheckedChange={(checked) => setIsEmailVerificationRequired(checked as boolean)}
+                  />
+                  <label
+                    htmlFor="verification"
+                    className="text-sm font-medium leading-none"
+                  >
+                    Require email verification (disable for development)
+                  </label>
+                </div>
+                
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Logging in...' : 'Log in'}
                 </Button>
