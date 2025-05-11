@@ -103,14 +103,14 @@ const RoomListing = () => {
               {/* Capacity Filter */}
               <div>
                 <Select 
-                  value={capacity?.toString() || ''} 
-                  onValueChange={(value) => setCapacity(value ? parseInt(value) : null)}
+                  value={capacity?.toString() || 'any'} 
+                  onValueChange={(value) => setCapacity(value === 'any' ? null : parseInt(value))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Capacity" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Capacity</SelectItem>
+                    <SelectItem value="any">Any Capacity</SelectItem>
                     <SelectItem value="1">1+ Person</SelectItem>
                     <SelectItem value="2">2+ People</SelectItem>
                     <SelectItem value="4">4+ People</SelectItem>
