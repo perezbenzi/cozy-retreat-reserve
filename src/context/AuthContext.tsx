@@ -13,8 +13,6 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  isEmailVerificationRequired: boolean;
-  setIsEmailVerificationRequired: (required: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -23,7 +21,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isEmailVerificationRequired, setIsEmailVerificationRequired] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,23 +75,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password
     });
     
-    // Check specifically for the email confirmation error
-    if (error && error.message.includes("Email not confirmed") && !isEmailVerificationRequired) {
-      toast.info("Your email is not confirmed, but we're letting you in for development purposes");
-      
-      // For development purposes, allow login anyway by trying again with sign-up
-      // This will create a new session without requiring email verification
-      return await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { 
-            email_confirmed_override: true 
-          }
-        }
-      });
-    }
-
     return { error };
   };
 
@@ -118,9 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUp,
     signIn,
     signInWithGoogle,
-    signOut,
-    isEmailVerificationRequired,
-    setIsEmailVerificationRequired
+    signOut
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

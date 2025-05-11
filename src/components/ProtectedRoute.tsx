@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading, isEmailVerificationRequired } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,13 +17,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       toast.error("You must be logged in to access this page");
       navigate("/login");
     }
-    
-    // If email verification is required but the user's email isn't confirmed
-    if (!loading && user && isEmailVerificationRequired && !user.email_confirmed_at) {
-      toast.warning("Please verify your email before accessing this page");
-      navigate("/login");
-    }
-  }, [user, loading, navigate, isEmailVerificationRequired]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
