@@ -29,13 +29,18 @@ const RoomCard = ({ room }: RoomCardProps) => {
     );
   };
   
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80";
+  };
+  
   return (
     <Card className="overflow-hidden h-full flex flex-col transition-all hover:shadow-md">
       <div className="relative aspect-[4/3] overflow-hidden">
         <img 
           src={room.images[currentImageIndex]} 
           alt={room.name} 
-          className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
+          className="w-full h-full object-cover"
+          onError={handleImageError}
         />
         
         {room.images.length > 1 && (

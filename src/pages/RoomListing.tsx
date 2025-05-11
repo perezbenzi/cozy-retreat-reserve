@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -21,8 +20,16 @@ const RoomListing = () => {
   const [sortOrder, setSortOrder] = useState<'price-low' | 'price-high'>('price-low');
   const [capacity, setCapacity] = useState<number | null>(null);
   
+  // Ensure all rooms have valid images
+  const validatedRooms = rooms.map(room => ({
+    ...room,
+    images: room.images.map(img => 
+      img || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+    )
+  }));
+  
   // Filter and sort rooms
-  const filteredRooms = rooms
+  const filteredRooms = validatedRooms
     .filter(room => {
       // Filter by search query
       if (searchQuery && !room.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
