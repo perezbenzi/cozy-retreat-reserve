@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from '@/context/AuthContext';
+import { FcGoogle } from 'react-icons/fc';
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
@@ -26,7 +28,14 @@ const Register = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signUp, signInWithGoogle, user } = useAuth();
+  
+  // Redirect if already logged in
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
@@ -41,21 +50,27 @@ const Register = () => {
     
     setIsLoading(true);
     
-    // Simulate registration attempt
-    setTimeout(() => {
+    try {
+      const { error } = await signUp(email, password, { firstName, lastName });
+      
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Registration successful! Please check your email for confirmation.");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred during registration");
+    } finally {
       setIsLoading(false);
-      
-      // Display toast message - will be replaced with actual registration
-      toast.info("This is a demo. Supabase authentication will be implemented here.");
-      
-      // Clear the form
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setAgreeTerms(false);
-    }, 1500);
+    }
+  };
+  
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred with Google login");
+    }
   };
   
   return (
@@ -169,9 +184,15 @@ const Register = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <Button variant="outline" type="button" className="w-full">Google</Button>
-                <Button variant="outline" type="button" className="w-full">Facebook</Button>
+              <div className="grid grid-cols-1 gap-4 mt-4">
+                <Button 
+                  variant="outline" 
+                  type="button" 
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={handleGoogleLogin}
+                >
+                  <FcGoogle className="h-5 w-5" /> Sign up with Google
+                </Button>
               </div>
             </CardContent>
             <CardFooter>

@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
@@ -15,27 +15,46 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from '@/context/AuthContext';
+import { FcGoogle } from 'react-icons/fc';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signIn, signInWithGoogle, user } = useAuth();
+  
+  // Redirect if already logged in
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login attempt
-    setTimeout(() => {
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Successfully logged in!");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred during login");
+    } finally {
       setIsLoading(false);
-      
-      // Display toast message - will be replaced with actual authentication
-      toast.info("This is a demo. Supabase authentication will be implemented here.");
-      
-      // Clear the form
-      setEmail('');
-      setPassword('');
-    }, 1500);
+    }
+  };
+  
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred with Google login");
+    }
   };
   
   return (
@@ -96,9 +115,15 @@ const Login = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <Button variant="outline" type="button" className="w-full">Google</Button>
-                <Button variant="outline" type="button" className="w-full">Facebook</Button>
+              <div className="grid grid-cols-1 gap-4 mt-4">
+                <Button 
+                  variant="outline" 
+                  type="button" 
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={handleGoogleLogin}
+                >
+                  <FcGoogle className="h-5 w-5" /> Sign in with Google
+                </Button>
               </div>
             </CardContent>
             <CardFooter>

@@ -1,5 +1,4 @@
-
-import { Room, Testimonial, Amenity } from '@/types';
+import { Room, Testimonial, Amenity, Booking } from '@/types';
 
 // Room data
 export const rooms: Room[] = [
