@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -10,6 +10,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
+
+// Function to check if we're in production
+const isProduction = (): boolean => {
+  return window.location.hostname.includes('lovable.app') || 
+         window.location.hostname === 'cozy-retreat-reserve.lovable.app';
+};
+
 const Register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -28,6 +35,13 @@ const Register = () => {
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  // Redirect if in production
+  if (isProduction()) {
+    toast.error("Registration is disabled in production mode");
+    return <Navigate to="/login" replace />;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
