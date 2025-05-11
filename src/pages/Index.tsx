@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -29,13 +30,11 @@ const Index = () => {
                 Modern, affordable accommodation in the heart of the city. Connect with fellow travelers in our vibrant spaces.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to="/rooms">
-                  <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                    Browse Rooms
-                  </Button>
+                <Link to="/rooms" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto">Browse Rooms</Button>
                 </Link>
-                <Link to="/booking">
-                  <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 text-green-300">
+                <Link to="/booking" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 w-full sm:w-auto">
                     Book Now
                   </Button>
                 </Link>
@@ -209,13 +208,13 @@ const Index = () => {
               Experience our welcoming atmosphere, comfortable accommodation, and make memories with travelers from around the world.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/booking">
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Link to="/booking" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto">
                   Book Now
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button size="lg" variant="outline" className="border-primary-foreground/70 text-primary-foreground hover:bg-primary-foreground/20">
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-primary-foreground/70 text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
                   Contact Us
                 </Button>
               </Link>
