@@ -36,6 +36,48 @@ export type Database = {
         }
         Relationships: []
       }
+      reservations: {
+        Row: {
+          check_in: string
+          check_out: string
+          created_at: string
+          guests: number
+          id: string
+          room_id: string
+          room_name: string
+          status: string
+          total_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          check_in: string
+          check_out: string
+          created_at?: string
+          guests: number
+          id?: string
+          room_id: string
+          room_name: string
+          status?: string
+          total_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          guests?: number
+          id?: string
+          room_id?: string
+          room_name?: string
+          status?: string
+          total_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

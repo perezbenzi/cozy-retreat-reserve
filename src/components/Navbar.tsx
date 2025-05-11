@@ -3,10 +3,13 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import AccountMenu from "@/components/AccountMenu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
@@ -49,12 +52,7 @@ const Navbar = () => {
         </div>
         
         <div className="hidden md:flex items-center space-x-4">
-          <Link to="/login">
-            <Button variant="outline">Log In</Button>
-          </Link>
-          <Link to="/register">
-            <Button>Sign Up</Button>
-          </Link>
+          <AccountMenu />
         </div>
         
         {/* Mobile Menu Button */}
@@ -105,13 +103,26 @@ const Navbar = () => {
             </Link>
           </div>
           
-          <div className="flex space-x-2 pt-4 border-t border-border">
-            <Link to="/login" className="flex-1">
-              <Button variant="outline" className="w-full" onClick={closeMenu}>Log In</Button>
-            </Link>
-            <Link to="/register" className="flex-1">
-              <Button className="w-full" onClick={closeMenu}>Sign Up</Button>
-            </Link>
+          <div className="flex pt-4 border-t border-border">
+            {user ? (
+              <div className="w-full">
+                <Link to="/dashboard" className="block w-full" onClick={closeMenu}>
+                  <Button variant="outline" className="w-full mb-2">Dashboard</Button>
+                </Link>
+                <Link to="/account" className="block w-full" onClick={closeMenu}>
+                  <Button variant="outline" className="w-full">Account</Button>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="flex-1">
+                  <Button variant="outline" className="w-full" onClick={closeMenu}>Log In</Button>
+                </Link>
+                <Link to="/register" className="flex-1 ml-2">
+                  <Button className="w-full" onClick={closeMenu}>Sign Up</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

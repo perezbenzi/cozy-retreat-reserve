@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import BookingFlow from "./pages/BookingFlow";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AccountSettings from "./pages/AccountSettings";
+import MyReservations from "./pages/MyReservations";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,16 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/account" element={
+              <ProtectedRoute>
+                <AccountSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/reservations" element={
+              <ProtectedRoute>
+                <MyReservations />
               </ProtectedRoute>
             } />
             <Route path="/booking/:roomId" element={
