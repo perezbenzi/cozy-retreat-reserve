@@ -1,24 +1,17 @@
-
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Check, User, Home, Clock, Phone, MapPin } from 'lucide-react';
-
 const About = () => {
-  return (
-    <>
+  return <>
       <Navbar />
       
       <main className="mt-16">
         {/* Hero Section */}
         <section className="relative h-[50vh] min-h-[300px] flex items-center">
           <div className="absolute inset-0 z-0">
-            <img 
-              src="https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
-              alt="Hostel common area" 
-              className="w-full h-full object-cover brightness-50" 
-            />
+            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Hostel common area" className="w-full h-full object-cover brightness-50" />
           </div>
           <div className="container-custom relative z-10 text-white">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">About TravelStay</h1>
@@ -45,11 +38,7 @@ const About = () => {
                 </p>
               </div>
               <div className="rounded-lg overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1100&q=80" 
-                  alt="TravelStay founders" 
-                  className="w-full h-auto object-cover"
-                />
+                <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1100&q=80" alt="TravelStay founders" className="w-full h-auto object-cover" />
               </div>
             </div>
           </div>
@@ -140,45 +129,34 @@ const About = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  name: "Alex Johnson",
-                  role: "Founder & Manager",
-                  image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                  bio: "Passionate traveler who has visited over 40 countries."
-                },
-                {
-                  name: "Maria Garcia",
-                  role: "Guest Relations",
-                  image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                  bio: "Always ready with local recommendations and a warm smile."
-                },
-                {
-                  name: "David Kim",
-                  role: "Facilities Manager",
-                  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                  bio: "Ensures everything is in perfect working order."
-                },
-                {
-                  name: "Sarah Chen",
-                  role: "Events Coordinator",
-                  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                  bio: "Organizes social activities and local tours for our guests."
-                }
-              ].map((member, index) => (
-                <div key={index} className="bg-background rounded-lg overflow-hidden shadow-sm">
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="w-full h-64 object-cover object-center"
-                  />
+              {[{
+              name: "Alex Johnson",
+              role: "Founder & Manager",
+              image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+              bio: "Passionate traveler who has visited over 40 countries."
+            }, {
+              name: "Maria Garcia",
+              role: "Guest Relations",
+              image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+              bio: "Always ready with local recommendations and a warm smile."
+            }, {
+              name: "David Kim",
+              role: "Facilities Manager",
+              image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+              bio: "Ensures everything is in perfect working order."
+            }, {
+              name: "Sarah Chen",
+              role: "Events Coordinator",
+              image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+              bio: "Organizes social activities and local tours for our guests."
+            }].map((member, index) => <div key={index} className="bg-background rounded-lg overflow-hidden shadow-sm">
+                  <img src={member.image} alt={member.name} className="w-full h-64 object-cover object-center" />
                   <div className="p-4">
                     <h3 className="font-medium text-lg">{member.name}</h3>
                     <p className="text-accent text-sm mb-2">{member.role}</p>
                     <p className="text-muted-foreground text-sm">{member.bio}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -192,7 +170,7 @@ const About = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/rooms" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto text-base border ">
                   Browse Rooms
                 </Button>
               </Link>
@@ -207,8 +185,6 @@ const About = () => {
       </main>
       
       <Footer />
-    </>
-  );
+    </>;
 };
-
 export default About;
