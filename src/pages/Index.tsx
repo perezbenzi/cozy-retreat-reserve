@@ -161,11 +161,11 @@ const Index = () => {
               </div>
               
               <div>
-                <h3 className="text-2xl font-medium mb-4">How to Find Us</h3>
+                <h3 className="font-medium mb-4 text-xl">How to Find Us</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-1">Address</h4>
+                    <h4 className="font-medium mb-1 text-base">Address</h4>
                     <p className="text-muted-foreground">
                       123 Traveler Street, Downtown<br />
                       City 12345, Country
@@ -173,7 +173,7 @@ const Index = () => {
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-1">Public Transport</h4>
+                    <h4 className="font-medium mb-1 text-base">Public Transport</h4>
                     <p className="text-muted-foreground">
                       5 minutes walk from Central Station<br />
                       Bus stops: Lines 10, 32, 45 (City Central stop)
@@ -181,7 +181,7 @@ const Index = () => {
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-1">From the Airport</h4>
+                    <h4 className="font-medium mb-1 text-base">From the Airport</h4>
                     <p className="text-muted-foreground">
                       Take the Airport Express to Central Station, then a 5-minute walk<br />
                       Taxi: Approximately 30 minutes (25km)
@@ -208,12 +208,12 @@ const Index = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/booking" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto border">
                   Book Now
                 </Button>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-primary-foreground/70 text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-primary-foreground/70 hover:bg-primary-foreground/20 w-full sm:w-auto text-zinc-950">
                   Contact Us
                 </Button>
               </Link>
