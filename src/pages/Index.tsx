@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -9,24 +8,17 @@ import TestimonialCard from '@/components/TestimonialCard';
 import AmenityCard from '@/components/AmenityCard';
 import { rooms, testimonials, amenities, galleryImages } from '@/data/roomData';
 import { MapPin } from 'lucide-react';
-
 const Index = () => {
   // Only show 3 featured rooms on homepage
   const featuredRooms = rooms.slice(0, 3);
-  
-  return (
-    <>
+  return <>
       <Navbar />
       
       <main className="mt-16">
         {/* Hero Section */}
         <section className="relative h-[85vh] min-h-[500px] flex items-center">
           <div className="absolute inset-0 z-0">
-            <img 
-              src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
-              alt="Hostel interior" 
-              className="w-full h-full object-cover brightness-50"
-            />
+            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Hostel interior" className="w-full h-full object-cover brightness-50" />
           </div>
           <div className="container-custom relative z-10 text-white">
             <div className="max-w-2xl">
@@ -43,7 +35,7 @@ const Index = () => {
                   </Button>
                 </Link>
                 <Link to="/booking">
-                  <Button size="lg" variant="outline" className="border-white/70 text-white hover:bg-white/20">
+                  <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 text-green-300">
                     Book Now
                   </Button>
                 </Link>
@@ -73,26 +65,10 @@ const Index = () => {
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <img 
-                  src="https://images.unsplash.com/photo-1551918120-9739cb430c6d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Hostel common area" 
-                  className="rounded-lg object-cover h-48 w-full"
-                />
-                <img 
-                  src="https://images.unsplash.com/photo-1520277739336-7bf67edfa768?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Hostel bedroom" 
-                  className="rounded-lg object-cover h-48 w-full"
-                />
-                <img 
-                  src="https://images.unsplash.com/photo-1523908511403-7fc7b25592f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Hostel kitchen" 
-                  className="rounded-lg object-cover h-48 w-full"
-                />
-                <img 
-                  src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Hostel social area" 
-                  className="rounded-lg object-cover h-48 w-full"
-                />
+                <img src="https://images.unsplash.com/photo-1551918120-9739cb430c6d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" alt="Hostel common area" className="rounded-lg object-cover h-48 w-full" />
+                <img src="https://images.unsplash.com/photo-1520277739336-7bf67edfa768?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" alt="Hostel bedroom" className="rounded-lg object-cover h-48 w-full" />
+                <img src="https://images.unsplash.com/photo-1523908511403-7fc7b25592f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" alt="Hostel kitchen" className="rounded-lg object-cover h-48 w-full" />
+                <img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1287&q=80" alt="Hostel social area" className="rounded-lg object-cover h-48 w-full" />
               </div>
             </div>
           </div>
@@ -109,9 +85,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredRooms.map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
+              {featuredRooms.map(room => <RoomCard key={room.id} room={room} />)}
             </div>
             
             <div className="mt-8 text-center">
@@ -133,9 +107,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {amenities.map((amenity) => (
-                <AmenityCard key={amenity.id} amenity={amenity} />
-              ))}
+              {amenities.map(amenity => <AmenityCard key={amenity.id} amenity={amenity} />)}
             </div>
           </div>
         </section>
@@ -165,9 +137,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {testimonials.map((testimonial) => (
-                <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-              ))}
+              {testimonials.map(testimonial => <TestimonialCard key={testimonial.id} testimonial={testimonial} />)}
             </div>
           </div>
         </section>
@@ -255,8 +225,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </>
-  );
+    </>;
 };
-
 export default Index;
