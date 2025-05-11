@@ -1,12 +1,8 @@
-
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
-  return (
-    <footer className="bg-primary text-primary-foreground">
+  return <footer className="text-primary-foreground bg-zinc-950">
       <div className="container-custom section-padding">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Column 1 - About */}
@@ -75,12 +71,8 @@ const Footer = () => {
               Subscribe to receive updates on special offers and events.
             </p>
             <div className="flex">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="py-2 px-3 rounded-l-md text-foreground w-full focus:outline-none"
-              />
-              <button className="bg-accent text-accent-foreground px-4 rounded-r-md hover:bg-accent/90 transition-colors">
+              <input type="email" placeholder="Your email address" className="py-2 px-3 rounded-l-md text-foreground w-full focus:outline-none" />
+              <button className="px-4 rounded-r-md transition-colors text-zinc-50 bg-neutral-950 hover:bg-neutral-800">
                 Subscribe
               </button>
             </div>
@@ -92,8 +84,6 @@ const Footer = () => {
           <p>&copy; {currentYear} TravelStay Hostel. All rights reserved.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
