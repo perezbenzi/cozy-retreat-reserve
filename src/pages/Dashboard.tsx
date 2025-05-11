@@ -28,6 +28,7 @@ const Dashboard = () => {
       }
       
       try {
+        console.log("Fetching bookings for user:", user.id);
         const { data, error } = await supabase
           .from('reservations')
           .select('*')
@@ -39,8 +40,8 @@ const Dashboard = () => {
           // Fallback to mock data if there's an error
           setUserBookings(mockBookings);
         } else if (data) {
+          console.log("Bookings data from Supabase:", data);
           // Transform Supabase data to match our Booking type
-          // Ensure status is one of the valid enum values: "confirmed", "pending", or "cancelled"
           const formattedBookings: Booking[] = data.map(booking => ({
             id: booking.id,
             roomId: booking.room_id,
@@ -113,14 +114,26 @@ const Dashboard = () => {
     toast.info(`This is a demo. Booking ${bookingId} would be modified here.`);
   };
   
-  // Filter bookings by status and date
+  // Fix the filtering logic for upcoming bookings
+  // A booking is upcoming if: 
+  // 1. The check-out date is in the future (not just check-in)
+  // 2. AND it's not cancelled
   const upcomingBookings = userBookings.filter(
-    booking => new Date(booking.checkInDate) > new Date() && booking.status !== 'cancelled'
+    booking => 
+      new Date(booking.checkOutDate) >= new Date() && 
+      booking.status !== 'cancelled'
   );
   
+  // Past bookings are either already completed or cancelled
   const pastBookings = userBookings.filter(
-    booking => new Date(booking.checkOutDate) < new Date() || booking.status === 'cancelled'
+    booking => 
+      new Date(booking.checkOutDate) < new Date() || 
+      booking.status === 'cancelled'
   );
+  
+  console.log("All bookings:", userBookings);
+  console.log("Upcoming bookings:", upcomingBookings);
+  console.log("Past bookings:", pastBookings);
   
   return (
     <>
