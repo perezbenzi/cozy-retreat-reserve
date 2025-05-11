@@ -40,6 +40,7 @@ const Dashboard = () => {
           setUserBookings(mockBookings);
         } else if (data) {
           // Transform Supabase data to match our Booking type
+          // Ensure status is one of the valid enum values: "confirmed", "pending", or "cancelled"
           const formattedBookings: Booking[] = data.map(booking => ({
             id: booking.id,
             roomId: booking.room_id,
@@ -50,7 +51,7 @@ const Dashboard = () => {
             checkOutDate: booking.check_out,
             numberOfGuests: booking.guests,
             totalPrice: booking.total_price,
-            status: booking.status,
+            status: validateBookingStatus(booking.status),
             createdAt: booking.created_at,
           }));
           setUserBookings(formattedBookings);
@@ -69,6 +70,15 @@ const Dashboard = () => {
     
     fetchBookings();
   }, [user]);
+  
+  // Helper function to validate booking status
+  const validateBookingStatus = (status: string): "confirmed" | "pending" | "cancelled" => {
+    if (status === "confirmed" || status === "pending" || status === "cancelled") {
+      return status as "confirmed" | "pending" | "cancelled";
+    }
+    // Default to "confirmed" if an invalid status is provided
+    return "confirmed";
+  };
   
   const cancelBooking = async (bookingId: string) => {
     try {
