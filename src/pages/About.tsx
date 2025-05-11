@@ -175,7 +175,7 @@ const About = () => {
                 </Button>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-primary-foreground/70 text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-primary-foreground/70 hover:bg-primary-foreground/20 w-full sm:w-auto text-zinc-950">
                   Contact Us
                 </Button>
               </Link>
