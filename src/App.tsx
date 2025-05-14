@@ -15,8 +15,13 @@ import Dashboard from "./pages/Dashboard";
 import BookingFlow from "./pages/BookingFlow";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import AccountSettings from "./pages/AccountSettings";
 import MyReservations from "./pages/MyReservations";
+
+// Admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminBookings from "./pages/admin/AdminBookings";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +71,20 @@ const App = () => (
                 <BookingFlow />
               </ProtectedRoute>
             } />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={
+              <ProtectedAdminRoute>
+                <AdminDashboard />
+              </ProtectedAdminRoute>
+            } />
+            
+            <Route path="/admin/bookings" element={
+              <ProtectedAdminRoute>
+                <AdminBookings />
+              </ProtectedAdminRoute>
+            } />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
