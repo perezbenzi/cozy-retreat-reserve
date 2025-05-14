@@ -17,8 +17,6 @@ import {
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Function to check if we're in production
 const isProduction = (): boolean => {
@@ -41,11 +39,6 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Disable authentication functionality per client request
-    toast.info("Authentication is temporarily disabled");
-    return;
-    
-    // The code below is preserved but currently unreachable
     setIsLoading(true);
     
     try {
@@ -53,8 +46,6 @@ const Login = () => {
       
       if (error) {
         toast.error(error.message);
-      } else {
-        toast.success("Successfully logged in!");
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred during login");
@@ -64,11 +55,6 @@ const Login = () => {
   };
   
   const handleGoogleLogin = async () => {
-    // Disable authentication functionality per client request
-    toast.info("Authentication is temporarily disabled");
-    return;
-    
-    // The code below is preserved but currently unreachable
     try {
       await signInWithGoogle();
     } catch (error: any) {
@@ -90,14 +76,6 @@ const Login = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Authentication Disabled</AlertTitle>
-                <AlertDescription>
-                  Login and registration are temporarily disabled. Please check back later.
-                </AlertDescription>
-              </Alert>
-              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -108,7 +86,6 @@ const Login = () => {
                     required 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    disabled={true}
                   />
                 </div>
                 <div className="space-y-2">
@@ -125,11 +102,10 @@ const Login = () => {
                     required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    disabled={true}
                   />
                 </div>
                 
-                <Button type="submit" className="w-full" disabled={true}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Logging in...' : 'Log in'}
                 </Button>
               </form>
@@ -151,7 +127,6 @@ const Login = () => {
                   type="button" 
                   className="w-full flex items-center justify-center gap-2"
                   onClick={handleGoogleLogin}
-                  disabled={true}
                 >
                   <FcGoogle className="h-5 w-5" /> Sign in with Google
                 </Button>

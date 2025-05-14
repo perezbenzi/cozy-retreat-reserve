@@ -11,8 +11,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Function to check if we're in production
 const isProduction = (): boolean => {
@@ -48,11 +46,6 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Disable authentication functionality per client request
-    toast.info("Authentication is temporarily disabled");
-    return;
-    
-    // The code below is preserved but currently unreachable
     if (password !== confirmPassword) {
       toast.error("Passwords don't match");
       return;
@@ -82,11 +75,6 @@ const Register = () => {
   };
   
   const handleGoogleLogin = async () => {
-    // Disable authentication functionality per client request
-    toast.info("Authentication is temporarily disabled");
-    return;
-    
-    // The code below is preserved but currently unreachable
     try {
       await signInWithGoogle();
     } catch (error: any) {
@@ -108,43 +96,35 @@ const Register = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Authentication Disabled</AlertTitle>
-                <AlertDescription>
-                  Registration is temporarily disabled. Please check back later.
-                </AlertDescription>
-              </Alert>
-              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" required value={firstName} onChange={e => setFirstName(e.target.value)} disabled={true} />
+                    <Input id="firstName" placeholder="John" required value={firstName} onChange={e => setFirstName(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" required value={lastName} onChange={e => setLastName(e.target.value)} disabled={true} />
+                    <Input id="lastName" placeholder="Doe" required value={lastName} onChange={e => setLastName(e.target.value)} />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={e => setEmail(e.target.value)} disabled={true} />
+                  <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} disabled={true} />
+                  <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" placeholder="••••••••" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} disabled={true} />
+                  <Input id="confirmPassword" type="password" placeholder="••••••••" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={checked => setAgreeTerms(checked as boolean)} disabled={true} />
+                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={checked => setAgreeTerms(checked as boolean)} />
                   <label htmlFor="terms" className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     I agree to the{" "}
                     <Link to="/terms" className="text-accent hover:underline">
@@ -157,7 +137,7 @@ const Register = () => {
                   </label>
                 </div>
                 
-                <Button type="submit" className="w-full" disabled={true}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Creating account...' : 'Sign up'}
                 </Button>
               </form>
@@ -179,7 +159,6 @@ const Register = () => {
                   type="button" 
                   className="w-full flex items-center justify-center gap-2" 
                   onClick={handleGoogleLogin}
-                  disabled={true}
                 >
                   <FcGoogle className="h-5 w-5" /> Sign up with Google
                 </Button>
