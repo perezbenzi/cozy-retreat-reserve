@@ -18,12 +18,6 @@ import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
 
-// Function to check if we're in production
-const isProduction = (): boolean => {
-  return window.location.hostname.includes('lovable.app') || 
-         window.location.hostname === 'cozy-retreat-reserve.lovable.app';
-};
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -133,14 +127,12 @@ const Login = () => {
               </div>
             </CardContent>
             <CardFooter>
-              {!isProduction() && (
-                <div className="text-center w-full text-sm">
-                  Don't have an account?{" "}
-                  <Link to="/register" className="text-accent font-medium hover:underline">
-                    Create an account
-                  </Link>
-                </div>
-              )}
+              <div className="text-center w-full text-sm">
+                Don't have an account?{" "}
+                <Link to="/register" className="text-accent font-medium hover:underline">
+                  Create an account
+                </Link>
+              </div>
             </CardFooter>
           </Card>
         </div>

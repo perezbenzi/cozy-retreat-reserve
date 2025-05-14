@@ -12,12 +12,6 @@ import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
 
-// Function to check if we're in production
-const isProduction = (): boolean => {
-  return window.location.hostname.includes('lovable.app') || 
-         window.location.hostname === 'cozy-retreat-reserve.lovable.app';
-};
-
 const Register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -35,12 +29,6 @@ const Register = () => {
   // Redirect if already logged in
   if (user) {
     return <Navigate to="/dashboard" replace />;
-  }
-
-  // Redirect if in production
-  if (isProduction()) {
-    toast.error("Registration is disabled in production mode");
-    return <Navigate to="/login" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

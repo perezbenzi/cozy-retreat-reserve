@@ -6,12 +6,6 @@ import { Menu, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import AccountMenu from "@/components/AccountMenu";
 
-// Function to check if we're in production
-const isProduction = (): boolean => {
-  return window.location.hostname.includes('lovable.app') || 
-         window.location.hostname === 'cozy-retreat-reserve.lovable.app';
-};
-
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -129,11 +123,9 @@ const Navbar = () => {
                 <Link to="/login" className="flex-1" onClick={closeMenu}>
                   <Button variant="outline" className="w-full">Log in</Button>
                 </Link>
-                {!isProduction() && (
-                  <Link to="/register" className="flex-1 ml-2" onClick={closeMenu}>
-                    <Button className="w-full">Sign up</Button>
-                  </Link>
-                )}
+                <Link to="/register" className="flex-1 ml-2" onClick={closeMenu}>
+                  <Button className="w-full">Sign up</Button>
+                </Link>
               </>
             )}
           </div>

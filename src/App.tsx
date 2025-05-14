@@ -25,12 +25,6 @@ import AdminBookings from "./pages/admin/AdminBookings";
 
 const queryClient = new QueryClient();
 
-// Function to check if we're in production
-const isProduction = (): boolean => {
-  return window.location.hostname.includes('lovable.app') || 
-         window.location.hostname === 'cozy-retreat-reserve.lovable.app';
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -45,11 +39,8 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             
-            {/* Conditionally render Register route or redirect to login */}
-            <Route 
-              path="/register" 
-              element={isProduction() ? <Navigate to="/login" replace /> : <Register />} 
-            />
+            {/* Allow registration regardless of environment */}
+            <Route path="/register" element={<Register />} />
             
             <Route path="/dashboard" element={
               <ProtectedRoute>
