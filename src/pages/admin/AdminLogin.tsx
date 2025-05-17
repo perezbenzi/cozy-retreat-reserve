@@ -58,7 +58,8 @@ const AdminLogin = () => {
         return;
       }
       
-      // We'll check for admin status in the Auth state update below
+      // Authentication successful, but we need to check for admin role separately
+      // This is handled in the effect below when the user state updates
     } catch (error: any) {
       toast.error(error.message || "An error occurred during login");
       setIsLoading(false);
@@ -90,6 +91,7 @@ const AdminLogin = () => {
     
     // This will handle the case after we've checked admin status
     if (isAdminUser === false) {
+      toast.error("No tienes privilegios de administrador");
       return <Navigate to="/dashboard" />;
     }
     

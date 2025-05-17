@@ -22,7 +22,11 @@ const ProtectedAdminRoute = ({
   
   useEffect(() => {
     const checkAdminRole = async () => {
-      if (!user) return;
+      if (!user) {
+        setIsAdmin(false);
+        setCheckingRole(false);
+        return;
+      }
       
       try {
         console.log("Checking admin role for user:", user.id);
@@ -44,11 +48,7 @@ const ProtectedAdminRoute = ({
       }
     };
     
-    if (user) {
-      checkAdminRole();
-    } else {
-      setCheckingRole(false);
-    }
+    checkAdminRole();
   }, [user, requiredRole]);
 
   useEffect(() => {
