@@ -29,8 +29,8 @@ interface UserWithRole {
   created_at: string;
 }
 
-// Define types for Supabase Auth user
-interface AuthUser {
+// Define a specific interface for Supabase Auth user that won't conflict with any imported User type
+interface AdminAuthUser {
   id: string;
   email: string | null;
   created_at: string;
@@ -76,8 +76,8 @@ const AdminUsers = () => {
       // Map admin user IDs for quick lookup
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
-      // Combine the data
-      const combinedUsers = authUsers.map((user: AuthUser) => ({
+      // Combine the data - make sure we're using our AdminAuthUser type
+      const combinedUsers = authUsers.map((user: AdminAuthUser) => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
@@ -119,7 +119,8 @@ const AdminUsers = () => {
       }
       
       const authUsers = authData?.users || [];
-      const user = authUsers.find((u: AuthUser) => 
+      // Use our AdminAuthUser type for the find operation
+      const user = authUsers.find((u: AdminAuthUser) => 
         u.email?.toLowerCase() === adminEmail.toLowerCase()
       );
       
