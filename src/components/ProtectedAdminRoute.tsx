@@ -71,6 +71,7 @@ const ProtectedAdminRoute = ({
     );
   }
 
+  // Only render admin content if user is logged in AND has admin role
   if (!user || isAdmin === false) return null;
   
   return <AdminLayout>{children}</AdminLayout>;
