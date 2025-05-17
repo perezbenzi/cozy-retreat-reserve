@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ReloadIcon, UserPlusIcon } from "lucide-react";
+import { RefreshCw, UserPlusIcon } from "lucide-react";
 
 interface UserWithRole {
   id: string;
@@ -46,7 +46,7 @@ const AdminUsers = () => {
 
       if (profilesError) throw profilesError;
 
-      if (!profiles.length) {
+      if (!profiles || !profiles.length) {
         setUsers([]);
         return;
       }
@@ -72,12 +72,12 @@ const AdminUsers = () => {
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
       // Combine the data
-      const combinedUsers = authUsers.users.map(user => ({
+      const combinedUsers = authUsers?.users?.map(user => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
         created_at: user.created_at
-      }));
+      })) || [];
 
       setUsers(combinedUsers);
     } catch (error) {
@@ -108,7 +108,7 @@ const AdminUsers = () => {
       
       if (userError) throw userError;
       
-      const user = userData.users.find(u => u.email?.toLowerCase() === adminEmail.toLowerCase());
+      const user = userData?.users?.find(u => u.email?.toLowerCase() === adminEmail.toLowerCase());
       
       if (!user) {
         toast.error("User not found with this email");
@@ -151,7 +151,7 @@ const AdminUsers = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
         <Button onClick={fetchUsers} variant="outline" size="sm">
-          <ReloadIcon className="h-4 w-4 mr-2" />
+          <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
         </Button>
       </div>
@@ -175,7 +175,7 @@ const AdminUsers = () => {
             <Button type="submit" disabled={promoting}>
               {promoting ? (
                 <>
-                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> 
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> 
                   Processing
                 </>
               ) : (
@@ -199,7 +199,7 @@ const AdminUsers = () => {
         <CardContent>
           {loading ? (
             <div className="flex justify-center py-8">
-              <ReloadIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : (
             <div className="rounded-md border">
