@@ -53,7 +53,7 @@ const ProtectedAdminRoute = ({
     if (!loading && !checkingRole) {
       if (!user) {
         toast.error("You must be logged in to access the admin panel");
-        navigate("/login");
+        navigate("/admin/login");
       } else if (!isAdmin) {
         toast.error(`You need ${requiredRole} permissions to access this page`);
         navigate("/dashboard");

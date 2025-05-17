@@ -79,7 +79,7 @@ const AdminUsers = () => {
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
       // Combine the data
-      const combinedUsers = (authUsers?.users || []).map((user: AuthUser) => ({
+      const combinedUsers = (authUsers?.users || []).map((user) => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
@@ -115,7 +115,7 @@ const AdminUsers = () => {
       
       if (userError) throw userError;
       
-      const user = (userData?.users || []).find((u: AuthUser) => 
+      const user = (userData?.users || []).find((u) => 
         u.email?.toLowerCase() === adminEmail.toLowerCase()
       );
       
