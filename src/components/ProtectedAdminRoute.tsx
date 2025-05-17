@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ProtectedAdminRouteProps {
   children: ReactNode;
-  requiredRole?: "admin";
+  requiredRole?: "admin"; // Remove "staff" to match the database enum
 }
 
 const ProtectedAdminRoute = ({ 
