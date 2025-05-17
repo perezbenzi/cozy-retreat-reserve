@@ -22,6 +22,7 @@ import MyReservations from "./pages/MyReservations";
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBookings from "./pages/admin/AdminBookings";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,12 @@ const App = () => (
             <Route path="/admin/bookings" element={
               <ProtectedAdminRoute>
                 <AdminBookings />
+              </ProtectedAdminRoute>
+            } />
+
+            <Route path="/admin/users" element={
+              <ProtectedAdminRoute>
+                <AdminUsers />
               </ProtectedAdminRoute>
             } />
             

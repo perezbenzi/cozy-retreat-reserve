@@ -9,7 +9,8 @@ import {
   Hotel, 
   Settings,
   Menu,
-  X
+  X,
+  UserCog
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -25,6 +26,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navItems = [
     { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/admin/bookings", icon: Calendar, label: "Bookings" },
+    { path: "/admin/users", icon: UserCog, label: "User Management" },
     { path: "/admin/guests", icon: Users, label: "Guests" },
     { path: "/admin/rooms", icon: Hotel, label: "Rooms" },
     { path: "/admin/settings", icon: Settings, label: "Settings" },
