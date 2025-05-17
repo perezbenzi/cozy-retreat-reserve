@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ProtectedAdminRouteProps {
   children: ReactNode;
-  requiredRole?: "admin"; // Remove "staff" to match the database enum
+  requiredRole?: "admin";
 }
 
 const ProtectedAdminRoute = ({ 
@@ -56,7 +56,7 @@ const ProtectedAdminRoute = ({
       if (!user) {
         toast.error("Debes iniciar sesión para acceder al panel de administración");
         navigate("/admin/login");
-      } else if (!isAdmin) {
+      } else if (isAdmin === false) {
         toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
         navigate("/dashboard");
       }
@@ -71,7 +71,7 @@ const ProtectedAdminRoute = ({
     );
   }
 
-  if (!user || !isAdmin) return null;
+  if (!user || isAdmin === false) return null;
   
   return <AdminLayout>{children}</AdminLayout>;
 };

@@ -59,7 +59,6 @@ const AdminLogin = () => {
       }
       
       // Let the Auth state update handle the rest
-      // We'll check for admin status in the useEffect below
     } catch (error: any) {
       toast.error(error.message || "An error occurred during login");
       setIsLoading(false);
