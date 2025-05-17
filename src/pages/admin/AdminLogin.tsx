@@ -77,7 +77,7 @@ const AdminLogin = () => {
           navigate('/admin');
         } else {
           // If not admin, show error and redirect to regular dashboard
-          toast.error("You don't have administrator privileges");
+          toast.error("No tienes privilegios de administrador");
           navigate('/dashboard');
         }
       });
@@ -91,7 +91,7 @@ const AdminLogin = () => {
     
     // This will handle the case after we've checked admin status
     if (isAdminUser === false) {
-      toast.error("You don't have administrator privileges");
+      toast.error("No tienes privilegios de administrador");
       return <Navigate to="/dashboard" />;
     }
     
@@ -108,9 +108,9 @@ const AdminLogin = () => {
               <Shield className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Admin Panel</CardTitle>
+          <CardTitle className="text-2xl text-center">Panel de Administración</CardTitle>
           <CardDescription className="text-center">
-            Please sign in with your administrator credentials
+            Inicia sesión con tus credenciales de administrador
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -127,7 +127,7 @@ const AdminLogin = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contraseña</Label>
               <Input 
                 id="password" 
                 type="password" 
@@ -139,13 +139,13 @@ const AdminLogin = () => {
             </div>
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </form>
         </CardContent>
         <CardFooter>
           <p className="text-center w-full text-sm text-muted-foreground">
-            Administrator accounts are created by system administrators.
+            Las cuentas de administrador son creadas por administradores del sistema.
           </p>
         </CardFooter>
       </Card>

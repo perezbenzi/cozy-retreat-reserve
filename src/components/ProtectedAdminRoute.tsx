@@ -27,17 +27,17 @@ const ProtectedAdminRoute = ({
       try {
         console.log("Checking admin role for user:", user.id);
         const { data, error } = await supabase
-          .rpc('has_role', { _role: 'admin' });
+          .rpc('has_role', { _role: requiredRole });
           
         if (error) {
-          console.error("Error checking admin role:", error);
+          console.error(`Error checking ${requiredRole} role:`, error);
           setIsAdmin(false);
         } else {
-          console.log("Admin check result:", data);
+          console.log(`${requiredRole} check result:`, data);
           setIsAdmin(!!data);
         }
       } catch (error) {
-        console.error("Failed to check admin role:", error);
+        console.error(`Failed to check ${requiredRole} role:`, error);
         setIsAdmin(false);
       } finally {
         setCheckingRole(false);
@@ -49,15 +49,15 @@ const ProtectedAdminRoute = ({
     } else {
       setCheckingRole(false);
     }
-  }, [user]);
+  }, [user, requiredRole]);
 
   useEffect(() => {
     if (!loading && !checkingRole) {
       if (!user) {
-        toast.error("You must be logged in to access the admin panel");
+        toast.error("Debes iniciar sesión para acceder al panel de administración");
         navigate("/admin/login");
       } else if (!isAdmin) {
-        toast.error(`You need ${requiredRole} permissions to access this page`);
+        toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
         navigate("/dashboard");
       }
     }
