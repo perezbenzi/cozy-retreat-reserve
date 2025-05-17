@@ -58,12 +58,8 @@ const AdminLogin = () => {
         return;
       }
       
-      // Check if the user is an admin after successful login
-      // This will be handled by ProtectedAdminRoute component
-      // We just need to wait for auth state to update
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+      // Let the Auth state update handle the rest
+      // We'll check for admin status in the useEffect below
     } catch (error: any) {
       toast.error(error.message || "An error occurred during login");
       setIsLoading(false);
@@ -77,9 +73,15 @@ const AdminLogin = () => {
       checkAdmin(user.id).then(isAdmin => {
         setIsAdminUser(isAdmin);
         if (isAdmin) {
+          // Important: Navigate explicitly to admin dashboard
           navigate('/admin');
+        } else {
+          // If not admin, show error and redirect to regular dashboard
+          toast.error("You don't have administrator privileges");
+          navigate('/dashboard');
         }
       });
+      
       return (
         <div className="h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -87,10 +89,10 @@ const AdminLogin = () => {
       );
     }
     
-    // If user is not an admin, show error message
+    // This will handle the case after we've checked admin status
     if (isAdminUser === false) {
       toast.error("You don't have administrator privileges");
-      return <Navigate to="/login" />;
+      return <Navigate to="/dashboard" />;
     }
     
     // If user is admin, redirect to admin dashboard

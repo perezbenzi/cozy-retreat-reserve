@@ -25,6 +25,7 @@ const ProtectedAdminRoute = ({
       if (!user) return;
       
       try {
+        console.log("Checking admin role for user:", user.id);
         const { data, error } = await supabase
           .rpc('has_role', { _role: 'admin' });
           
@@ -32,6 +33,7 @@ const ProtectedAdminRoute = ({
           console.error("Error checking admin role:", error);
           setIsAdmin(false);
         } else {
+          console.log("Admin check result:", data);
           setIsAdmin(!!data);
         }
       } catch (error) {
