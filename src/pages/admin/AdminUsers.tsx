@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -76,8 +75,8 @@ const AdminUsers = () => {
       // Map admin user IDs for quick lookup
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
-      // Combine the data - make sure we're using our AdminAuthUser type
-      const combinedUsers = authUsers.map((user: AdminAuthUser) => ({
+      // Use explicit type assertion to fix the type mismatch
+      const combinedUsers = authUsers.map((user: any) => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
@@ -119,8 +118,8 @@ const AdminUsers = () => {
       }
       
       const authUsers = authData?.users || [];
-      // Use our AdminAuthUser type for the find operation
-      const user = authUsers.find((u: AdminAuthUser) => 
+      // Fix the type mismatch by using explicit any type
+      const user = authUsers.find((u: any) => 
         u.email?.toLowerCase() === adminEmail.toLowerCase()
       );
       
