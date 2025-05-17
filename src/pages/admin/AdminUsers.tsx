@@ -29,6 +29,13 @@ interface UserWithRole {
   created_at: string;
 }
 
+// Define types for Supabase Auth user
+interface AuthUser {
+  id: string;
+  email: string | null;
+  created_at: string;
+}
+
 const AdminUsers = () => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,12 +79,12 @@ const AdminUsers = () => {
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
       // Combine the data
-      const combinedUsers = authUsers?.users?.map(user => ({
+      const combinedUsers = (authUsers?.users || []).map((user: AuthUser) => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
         created_at: user.created_at
-      })) || [];
+      }));
 
       setUsers(combinedUsers);
     } catch (error) {
@@ -108,7 +115,9 @@ const AdminUsers = () => {
       
       if (userError) throw userError;
       
-      const user = userData?.users?.find(u => u.email?.toLowerCase() === adminEmail.toLowerCase());
+      const user = (userData?.users || []).find((u: AuthUser) => 
+        u.email?.toLowerCase() === adminEmail.toLowerCase()
+      );
       
       if (!user) {
         toast.error("User not found with this email");
