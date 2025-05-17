@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,20 +25,24 @@ const AdminLogin = () => {
   const { user, signIn } = useAuth();
   const navigate = useNavigate();
   
-  // Check if user is admin
+  // Check if user is admin - this function must be definitive
   const checkAdmin = async (userId: string) => {
     try {
+      console.log("Checking admin role for user:", userId);
       const { data, error } = await supabase
         .rpc('has_role', { _role: 'admin' });
         
       if (error) {
         console.error("Error checking admin role:", error);
+        toast.error("Error verifying admin permissions");
         return false;
       }
       
+      console.log("Admin check result:", data);
       return !!data;
     } catch (error) {
       console.error("Failed to check admin role:", error);
+      toast.error("Error verifying admin permissions");
       return false;
     }
   };
@@ -66,37 +70,35 @@ const AdminLogin = () => {
     }
   };
   
-  // If user is logged in, check if they're an admin
-  if (user) {
-    if (isAdminUser === null) {
-      // Check if user is an admin
-      checkAdmin(user.id).then(isAdmin => {
+  // If user is logged in, immediately check if they're an admin
+  useEffect(() => {
+    const verifyAdminStatus = async () => {
+      if (user) {
+        const isAdmin = await checkAdmin(user.id);
         setIsAdminUser(isAdmin);
+        
         if (isAdmin) {
-          // Important: Navigate explicitly to admin dashboard
           navigate('/admin');
         } else {
           // If not admin, show error and redirect to regular dashboard
           toast.error("No tienes privilegios de administrador");
           navigate('/dashboard');
         }
-      });
-      
-      return (
-        <div className="h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      );
-    }
+      }
+    };
     
-    // This will handle the case after we've checked admin status
-    if (isAdminUser === false) {
-      toast.error("No tienes privilegios de administrador");
-      return <Navigate to="/dashboard" />;
+    if (user) {
+      verifyAdminStatus();
     }
-    
-    // If user is admin, redirect to admin dashboard
-    return <Navigate to="/admin" />;
+  }, [user, navigate]);
+  
+  // If user is logged in, show loading until admin check is complete
+  if (user) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
   
   return (
