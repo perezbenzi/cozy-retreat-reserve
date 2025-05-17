@@ -46,20 +46,8 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // Get all profiles (will include all users)
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("id, created_at");
-
-      if (profilesError) throw profilesError;
-
-      if (!profiles || !profiles.length) {
-        setUsers([]);
-        return;
-      }
-
-      // Get user details from auth.users through Supabase admin functions
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      // Get all auth users through Supabase admin functions
+      const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
       
       if (authError) {
         console.error("Error fetching users:", authError);
@@ -67,19 +55,29 @@ const AdminUsers = () => {
         return;
       }
 
+      const authUsers = authData?.users || [];
+      
+      if (!authUsers || authUsers.length === 0) {
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+
       // Get admin roles
       const { data: adminRoles, error: rolesError } = await supabase
         .from("user_roles")
-        .select("user_id")
-        .eq("role", "admin");
+        .select("user_id");
 
-      if (rolesError) throw rolesError;
+      if (rolesError) {
+        console.error("Error fetching roles:", rolesError);
+        toast.error("Failed to load user roles");
+      }
 
       // Map admin user IDs for quick lookup
       const adminIds = new Set((adminRoles || []).map(role => role.user_id));
 
       // Combine the data
-      const combinedUsers = (authUsers?.users || []).map((user) => ({
+      const combinedUsers = authUsers.map((user: AuthUser) => ({
         id: user.id,
         email: user.email || "No email",
         isAdmin: adminIds.has(user.id),
@@ -111,18 +109,27 @@ const AdminUsers = () => {
     setPromoting(true);
     try {
       // First, get the user ID from the email
-      const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
+      const { data: authData, error: userError } = await supabase.auth.admin.listUsers();
       
-      if (userError) throw userError;
+      if (userError) {
+        console.error("Error fetching users:", userError);
+        toast.error("Could not fetch users to find email");
+        setPromoting(false);
+        return;
+      }
       
-      const user = (userData?.users || []).find((u) => 
+      const authUsers = authData?.users || [];
+      const user = authUsers.find((u: AuthUser) => 
         u.email?.toLowerCase() === adminEmail.toLowerCase()
       );
       
       if (!user) {
         toast.error("User not found with this email");
+        setPromoting(false);
         return;
       }
+
+      console.log("Found user with ID:", user.id);
       
       // Check if already admin
       const { data: existingRole } = await supabase
@@ -134,19 +141,38 @@ const AdminUsers = () => {
         
       if (existingRole) {
         toast.info("This user is already an admin");
+        setPromoting(false);
+        return;
+      }
+
+      // Check if user exists in auth.users
+      const { data: authUserCheck, error: authCheckError } = await supabase.auth.admin.getUserById(user.id);
+      
+      if (authCheckError || !authUserCheck?.user) {
+        console.error("User doesn't exist in auth.users:", authCheckError);
+        toast.error("This user ID is not valid in the authentication system");
+        setPromoting(false);
         return;
       }
 
       // Add admin role
       const { error: insertError } = await supabase
         .from("user_roles")
-        .insert({ user_id: user.id, role: "admin" });
+        .insert({ 
+          user_id: user.id, 
+          role: "admin" 
+        });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error("Error promoting user:", insertError);
+        toast.error(`Failed to promote user: ${insertError.message}`);
+        setPromoting(false);
+        return;
+      }
       
       toast.success(`${adminEmail} has been promoted to admin`);
       setAdminEmail("");
-      fetchUsers(); // Refresh the user list
+      await fetchUsers(); // Refresh the user list
     } catch (error: any) {
       console.error("Error promoting user:", error);
       toast.error(error.message || "Failed to promote user");
@@ -218,12 +244,13 @@ const AdminUsers = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Created At</TableHead>
+                    <TableHead>User ID</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                         No users found
                       </TableCell>
                     </TableRow>
@@ -240,6 +267,9 @@ const AdminUsers = () => {
                         </TableCell>
                         <TableCell>
                           {new Date(user.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {user.id}
                         </TableCell>
                       </TableRow>
                     ))
