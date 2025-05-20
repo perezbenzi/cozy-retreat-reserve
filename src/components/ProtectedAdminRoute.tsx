@@ -25,51 +25,60 @@ const ProtectedAdminRoute = ({
     const checkAdminRole = async () => {
       // If no user is logged in, they can't be an admin
       if (!user) {
+        console.log("ProtectedAdminRoute: No user logged in");
         setIsAdmin(false);
         setCheckingRole(false);
         return;
       }
       
       try {
-        console.log("Checking admin role for user:", user.id);
+        console.log("ProtectedAdminRoute: Checking admin role for user:", user.id, user.email);
         const { data, error } = await supabase
           .rpc('has_role', { _role: requiredRole });
           
         if (error) {
-          console.error(`Error checking ${requiredRole} role:`, error);
+          console.error(`ProtectedAdminRoute: Error checking ${requiredRole} role:`, error);
           setIsAdmin(false);
           toast.error(`Error verificando permisos de ${requiredRole}`);
         } else {
-          console.log(`${requiredRole} check result:`, data);
+          // Log the exact response from the has_role function
+          console.log(`ProtectedAdminRoute: ${requiredRole} check result (raw):`, data);
+          console.log(`ProtectedAdminRoute: ${requiredRole} check result type:`, typeof data);
+          
           // Explicitly cast to boolean to ensure we have a definitive true/false
           const hasAdminRole = Boolean(data);
+          console.log(`ProtectedAdminRoute: User has ${requiredRole} role:`, hasAdminRole);
+          
           setIsAdmin(hasAdminRole);
           
           if (!hasAdminRole) {
-            console.log("User does not have admin role, will redirect");
+            console.log("ProtectedAdminRoute: User does not have admin role, will redirect");
+            toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
+            navigate("/dashboard");
           }
         }
       } catch (error) {
-        console.error(`Failed to check ${requiredRole} role:`, error);
+        console.error(`ProtectedAdminRoute: Failed to check ${requiredRole} role:`, error);
         setIsAdmin(false);
+        setCheckingRole(false);
       } finally {
         setCheckingRole(false);
       }
     };
     
     checkAdminRole();
-  }, [user, requiredRole]);
+  }, [user, requiredRole, navigate]);
 
   // Handle redirections based on auth status and admin role
   useEffect(() => {
     // Only perform redirects after both auth check and role check are complete
     if (!loading && !checkingRole) {
       if (!user) {
-        console.log("No user logged in, redirecting to admin login");
+        console.log("ProtectedAdminRoute: No user logged in, redirecting to admin login");
         toast.error("Debes iniciar sesión para acceder al panel de administración");
         navigate("/admin/login");
       } else if (isAdmin === false) {
-        console.log("User is not admin, redirecting to dashboard");
+        console.log("ProtectedAdminRoute: User is not admin, redirecting to dashboard");
         toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
         navigate("/dashboard");
       }
@@ -86,10 +95,12 @@ const ProtectedAdminRoute = ({
   }
 
   // Only render admin content if user is logged in AND has admin role
-  if (!user || isAdmin === false) {
+  if (!user || isAdmin !== true) {
+    console.log("ProtectedAdminRoute: Not rendering admin content. User:", !!user, "isAdmin:", isAdmin);
     return null;
   }
   
+  console.log("ProtectedAdminRoute: Rendering admin content");
   return <AdminLayout>{children}</AdminLayout>;
 };
 

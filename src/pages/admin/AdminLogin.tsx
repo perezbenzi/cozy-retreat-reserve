@@ -28,20 +28,27 @@ const AdminLogin = () => {
   // Check if user is admin - this function must be definitive
   const checkAdmin = async (userId: string) => {
     try {
-      console.log("Checking admin role for user:", userId);
+      console.log("AdminLogin: Checking admin role for user:", userId);
       const { data, error } = await supabase
         .rpc('has_role', { _role: 'admin' });
         
       if (error) {
-        console.error("Error checking admin role:", error);
+        console.error("AdminLogin: Error checking admin role:", error);
         toast.error("Error verifying admin permissions");
         return false;
       }
       
-      console.log("Admin check result:", data);
-      return !!data;
+      // Log the exact response from the has_role function
+      console.log("AdminLogin: Admin check result (raw):", data);
+      console.log("AdminLogin: Admin check result type:", typeof data);
+      
+      // Explicitly cast to boolean to ensure we have a definitive true/false
+      const isAdmin = Boolean(data);
+      console.log("AdminLogin: Is user admin:", isAdmin);
+      
+      return isAdmin;
     } catch (error) {
-      console.error("Failed to check admin role:", error);
+      console.error("AdminLogin: Failed to check admin role:", error);
       toast.error("Error verifying admin permissions");
       return false;
     }
@@ -74,16 +81,21 @@ const AdminLogin = () => {
   useEffect(() => {
     const verifyAdminStatus = async () => {
       if (user) {
+        console.log("AdminLogin: User logged in, checking admin status:", user.id, user.email);
+        setIsLoading(true);
         const isAdmin = await checkAdmin(user.id);
         setIsAdminUser(isAdmin);
         
         if (isAdmin) {
+          console.log("AdminLogin: User is admin, navigating to admin dashboard");
           navigate('/admin');
         } else {
           // If not admin, show error and redirect to regular dashboard
+          console.log("AdminLogin: User is NOT admin, redirecting to dashboard");
           toast.error("No tienes privilegios de administrador");
           navigate('/dashboard');
         }
+        setIsLoading(false);
       }
     };
     
@@ -97,6 +109,7 @@ const AdminLogin = () => {
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <p className="ml-2">Verificando permisos de administrador...</p>
       </div>
     );
   }
