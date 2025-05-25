@@ -178,7 +178,6 @@ export const es: TranslationKeys = {
     subjectPlaceholder: "¿Cómo podemos ayudarte?",
     messagePlaceholder: "Por favor describe tu pregunta o solicitud",
     sending: "Enviando...",
-    sendMessage: "Enviar Mensaje",
     messageSent: "Mensaje enviado exitosamente. ¡Te responderemos pronto!",
     findUsOnMap: "Encuéntranos en el Mapa",
     mapDescription: "Estamos convenientemente ubicados en el corazón de la ciudad, a solo 5 minutos de la Estación Central.",

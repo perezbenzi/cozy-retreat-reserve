@@ -176,7 +176,6 @@ export const en = {
     subjectPlaceholder: "How can we help you?",
     messagePlaceholder: "Please describe your question or request",
     sending: "Sending...",
-    sendMessage: "Send Message",
     messageSent: "Message sent successfully. We'll get back to you soon!",
     findUsOnMap: "Find Us on the Map",
     mapDescription: "We're conveniently located in the heart of the city, just 5 minutes from Central Station.",
