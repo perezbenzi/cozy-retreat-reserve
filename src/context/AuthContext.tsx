@@ -1,8 +1,7 @@
-
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
 
 interface AuthContextType {
@@ -22,20 +21,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log("AuthContext: Auth state changed:", event);
+        console.log("AuthContext: Session:", currentSession ? "exists" : "null");
+        console.log("AuthContext: Current location:", location.pathname);
+        
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (event === 'SIGNED_IN') {
-          navigate('/dashboard');
-          toast.success("Successfully logged in!");
+          // Only auto-redirect if NOT on admin login page
+          if (location.pathname !== '/admin/login') {
+            console.log("AuthContext: Auto-redirigiendo a dashboard (no es admin login)");
+            navigate('/dashboard');
+            toast.success("Successfully logged in!");
+          } else {
+            console.log("AuthContext: Login desde admin - NO auto-redirigiendo");
+            // Admin login will handle its own verification and redirection
+          }
         }
         
         if (event === 'SIGNED_OUT') {
+          console.log("AuthContext: Usuario cerró sesión, redirigiendo a home");
           navigate('/');
           toast.success("Successfully logged out!");
         }
@@ -44,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("AuthContext: Sesión inicial:", session ? "exists" : "null");
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -52,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const signUp = async (email: string, password: string, metadata?: { firstName?: string, lastName?: string }) => {
     try {
