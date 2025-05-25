@@ -28,23 +28,24 @@ const AdminLogin = () => {
   // Check if user is admin - this function must be definitive
   const checkAdmin = async (userId: string) => {
     try {
-      console.log("AdminLogin: === INICIO VERIFICACIÓN ADMIN ===");
-      console.log("AdminLogin: Usuario actual ID:", userId);
-      console.log("AdminLogin: Usuario actual email:", user?.email);
+      console.log("=== INICIO VERIFICACIÓN ADMIN EN AdminLogin ===");
+      console.log("Usuario actual ID:", userId);
+      console.log("Usuario actual email:", user?.email);
+      console.log("Usuario actual completo:", user);
       
-      console.log("AdminLogin: Llamando has_role con parámetros:", { _role: 'admin' });
+      console.log("Llamando has_role con parámetros:", { _role: 'admin' });
       const { data, error } = await supabase
         .rpc('has_role', { _role: 'admin' });
       
-      console.log("AdminLogin: === RESULTADO RPC has_role ===");
-      console.log("AdminLogin: Data (raw):", data);
-      console.log("AdminLogin: Data (tipo):", typeof data);
-      console.log("AdminLogin: Error:", error);
-      console.log("AdminLogin: ================================");
+      console.log("=== RESULTADO RPC has_role ===");
+      console.log("Data (raw):", data);
+      console.log("Data (tipo):", typeof data);
+      console.log("Error:", error);
+      console.log("================================");
         
       if (error) {
-        console.error("AdminLogin: Error en RPC has_role:", error);
-        console.error("AdminLogin: Error details:", {
+        console.error("Error en RPC has_role:", error);
+        console.error("Error details:", {
           message: error.message,
           details: error.details,
           hint: error.hint,
@@ -56,12 +57,12 @@ const AdminLogin = () => {
       
       // Explicitly cast to boolean to ensure we have a definitive true/false
       const isAdmin = Boolean(data);
-      console.log("AdminLogin: Conversión a boolean:", isAdmin);
-      console.log("AdminLogin: === FIN VERIFICACIÓN ADMIN ===");
+      console.log("Conversión a boolean:", isAdmin);
+      console.log("=== FIN VERIFICACIÓN ADMIN ===");
       
       return isAdmin;
     } catch (error) {
-      console.error("AdminLogin: Excepción en checkAdmin:", error);
+      console.error("Excepción en checkAdmin:", error);
       toast.error("Error verifying admin permissions");
       return false;
     }
@@ -74,21 +75,21 @@ const AdminLogin = () => {
     setIsLoading(true);
     
     try {
-      console.log("AdminLogin: Iniciando proceso de login admin");
+      console.log("Iniciando proceso de login admin");
       const { error } = await signIn(email, password);
       
       if (error) {
-        console.error("AdminLogin: Error en signIn:", error);
+        console.error("Error en signIn:", error);
         toast.error(error.message);
         setIsLoading(false);
         return;
       }
       
-      console.log("AdminLogin: Login exitoso, esperando verificación admin...");
+      console.log("Login exitoso, esperando verificación admin...");
       // Authentication successful, but we need to check for admin role separately
       // This is handled in the effect below when the user state updates
     } catch (error: any) {
-      console.error("AdminLogin: Excepción en handleAdminLogin:", error);
+      console.error("Excepción en handleAdminLogin:", error);
       toast.error(error.message || "An error occurred during login");
       setIsLoading(false);
     }
@@ -96,43 +97,53 @@ const AdminLogin = () => {
   
   // If user is logged in, immediately check if they're an admin
   useEffect(() => {
+    console.log("=== USEEFFECT ACTIVADO ===");
+    console.log("User state:", user);
+    console.log("User existe:", !!user);
+    
     const verifyAdminStatus = async () => {
       if (user) {
-        console.log("AdminLogin: === EFECTO useEffect ACTIVADO ===");
-        console.log("AdminLogin: Usuario detectado:", {
+        console.log("=== EJECUTANDO verifyAdminStatus ===");
+        console.log("Usuario detectado:", {
           id: user.id,
           email: user.email,
           created_at: user.created_at
         });
         
         setIsLoading(true);
+        console.log("Llamando checkAdmin...");
         const isAdmin = await checkAdmin(user.id);
+        console.log("Resultado checkAdmin:", isAdmin);
         setIsAdminUser(isAdmin);
         
-        console.log("AdminLogin: Resultado final isAdmin:", isAdmin);
+        console.log("Resultado final isAdmin:", isAdmin);
         
         if (isAdmin) {
-          console.log("AdminLogin: Usuario ES admin, navegando a /admin");
+          console.log("Usuario ES admin, navegando a /admin");
           navigate('/admin');
           toast.success("Bienvenido al panel de administración");
         } else {
-          console.log("AdminLogin: Usuario NO es admin, navegando a /dashboard");
+          console.log("Usuario NO es admin, navegando a /dashboard");
           toast.error("No tienes privilegios de administrador");
           navigate('/dashboard');
         }
         setIsLoading(false);
       } else {
-        console.log("AdminLogin: No hay usuario logueado");
+        console.log("No hay usuario logueado en useEffect");
       }
     };
     
     if (user) {
+      console.log("Llamando verifyAdminStatus porque user existe");
       verifyAdminStatus();
+    } else {
+      console.log("No llamando verifyAdminStatus porque no hay user");
     }
   }, [user, navigate]);
   
   // If user is logged in, show loading until admin check is complete
   if (user) {
+    console.log("Renderizando loading porque user existe");
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -141,6 +152,7 @@ const AdminLogin = () => {
     );
   }
   
+  console.log("Renderizando formulario de login");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
