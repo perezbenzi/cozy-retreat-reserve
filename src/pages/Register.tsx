@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
@@ -25,6 +26,7 @@ const Register = () => {
     signInWithGoogle,
     user
   } = useAuth();
+  const { t } = useTranslation();
 
   // Redirect if already logged in
   if (user) {
@@ -35,11 +37,11 @@ const Register = () => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      toast.error("Passwords don't match");
+      toast.error(t.auth.passwordsDontMatch);
       return;
     }
     if (!agreeTerms) {
-      toast.error("Please agree to the terms and conditions");
+      toast.error(t.auth.agreeToTermsError);
       return;
     }
     setIsLoading(true);
@@ -53,7 +55,7 @@ const Register = () => {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Registration successful! Please check your email for confirmation.");
+        toast.success(t.auth.registrationSuccess);
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred during registration");
@@ -78,55 +80,55 @@ const Register = () => {
         <div className="container-custom max-w-md">
           <Card className="w-full">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center">Create an account</CardTitle>
+              <CardTitle className="text-2xl text-center">{t.auth.registerTitle}</CardTitle>
               <CardDescription className="text-center">
-                Enter your information to create an account
+                {t.auth.registerDescription}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">{t.auth.firstName}</Label>
                     <Input id="firstName" placeholder="John" required value={firstName} onChange={e => setFirstName(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">{t.auth.lastName}</Label>
                     <Input id="lastName" placeholder="Doe" required value={lastName} onChange={e => setLastName(e.target.value)} />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t.auth.email}</Label>
                   <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t.auth.password}</Label>
                   <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
                   <Input id="confirmPassword" type="password" placeholder="••••••••" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                 </div>
                 
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={agreeTerms} onCheckedChange={checked => setAgreeTerms(checked as boolean)} />
                   <label htmlFor="terms" className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    I agree to the{" "}
+                    {t.auth.agreeToTerms}{" "}
                     <Link to="/terms" className="text-accent hover:underline">
-                      terms of service
+                      {t.auth.termsOfService}
                     </Link>
-                    {" "}and{" "}
+                    {" "}{t.auth.and}{" "}
                     <Link to="/privacy" className="text-accent hover:underline">
-                      privacy policy
+                      {t.auth.privacyPolicy}
                     </Link>
                   </label>
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Creating account...' : 'Sign up'}
+                  {isLoading ? t.auth.creatingAccount : t.auth.register}
                 </Button>
               </form>
               
@@ -136,7 +138,7 @@ const Register = () => {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    or continue with
+                    {t.auth.orContinueWith}
                   </span>
                 </div>
               </div>
@@ -148,15 +150,15 @@ const Register = () => {
                   className="w-full flex items-center justify-center gap-2" 
                   onClick={handleGoogleLogin}
                 >
-                  <FcGoogle className="h-5 w-5" /> Sign up with Google
+                  <FcGoogle className="h-5 w-5" /> {t.auth.signUpWithGoogle}
                 </Button>
               </div>
             </CardContent>
             <CardFooter>
               <div className="text-center w-full text-sm">
-                Already have an account?{" "}
+                {t.auth.alreadyHaveAccount}{" "}
                 <Link to="/login" className="text-accent font-medium hover:underline">
-                  Log in
+                  {t.auth.login}
                 </Link>
               </div>
             </CardFooter>

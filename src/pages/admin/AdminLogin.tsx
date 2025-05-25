@@ -16,6 +16,7 @@ import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Shield } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -23,6 +24,7 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, signIn } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // Check if user is admin - this function must be definitive
   const checkAdmin = async (userId: string) => {
@@ -49,7 +51,7 @@ const AdminLogin = () => {
           hint: error.hint,
           code: error.code
         });
-        toast.error("Error verifying admin permissions");
+        toast.error(t.admin.errorVerifyingPermissions);
         return false;
       }
       
@@ -61,7 +63,7 @@ const AdminLogin = () => {
       return isAdmin;
     } catch (error) {
       console.error("checkAdmin: Excepción:", error);
-      toast.error("Error verifying admin permissions");
+      toast.error(t.admin.errorVerifyingPermissions);
       return false;
     }
   };
@@ -107,10 +109,10 @@ const AdminLogin = () => {
       if (isAdmin) {
         console.log("handleAdminLogin: Usuario ES admin, navegando a /admin");
         navigate('/admin');
-        toast.success("Bienvenido al panel de administración");
+        toast.success(t.admin.welcomeToAdmin);
       } else {
         console.log("handleAdminLogin: Usuario NO es admin, navegando a /dashboard");
-        toast.error("No tienes privilegios de administrador");
+        toast.error(t.admin.noAdminPrivileges);
         navigate('/dashboard');
       }
       
@@ -129,7 +131,7 @@ const AdminLogin = () => {
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        <p className="ml-2">Ya estás logueado, verificando permisos...</p>
+        <p className="ml-2">{t.admin.alreadyLoggedIn}</p>
       </div>
     );
   }
@@ -144,15 +146,15 @@ const AdminLogin = () => {
               <Shield className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Panel de Administración</CardTitle>
+          <CardTitle className="text-2xl text-center">{t.admin.adminPanel}</CardTitle>
           <CardDescription className="text-center">
-            Inicia sesión con tus credenciales de administrador
+            {t.admin.loginWithCredentials}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAdminLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t.auth.email}</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -163,7 +165,7 @@ const AdminLogin = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">{t.auth.password}</Label>
               <Input 
                 id="password" 
                 type="password" 
@@ -175,13 +177,13 @@ const AdminLogin = () => {
             </div>
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Verificando permisos...' : 'Iniciar sesión'}
+              {isLoading ? t.admin.verifyingPermissions : t.auth.login}
             </Button>
           </form>
         </CardContent>
         <CardFooter>
           <p className="text-center w-full text-sm text-muted-foreground">
-            Las cuentas de administrador son creadas por administradores del sistema.
+            {t.admin.adminAccountsNote}
           </p>
         </CardFooter>
       </Card>

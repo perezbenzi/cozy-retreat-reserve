@@ -17,6 +17,7 @@ import {
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -24,6 +25,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { signIn, signInWithGoogle, user } = useAuth();
+  const { t } = useTranslation();
   
   // Redirect if already logged in
   if (user) {
@@ -64,15 +66,15 @@ const Login = () => {
         <div className="container-custom max-w-md">
           <Card className="w-full">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center">Log in to your account</CardTitle>
+              <CardTitle className="text-2xl text-center">{t.auth.loginTitle}</CardTitle>
               <CardDescription className="text-center">
-                Enter your email and password to access your account
+                {t.auth.loginDescription}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t.auth.email}</Label>
                   <Input 
                     id="email" 
                     type="email" 
@@ -84,9 +86,9 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t.auth.password}</Label>
                     <Link to="/forgot-password" className="text-sm text-accent hover:underline">
-                      Forgot password?
+                      {t.auth.forgotPassword}
                     </Link>
                   </div>
                   <Input 
@@ -100,7 +102,7 @@ const Login = () => {
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Logging in...' : 'Log in'}
+                  {isLoading ? t.auth.loggingIn : t.auth.login}
                 </Button>
               </form>
               
@@ -110,7 +112,7 @@ const Login = () => {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    or continue with
+                    {t.auth.orContinueWith}
                   </span>
                 </div>
               </div>
@@ -122,15 +124,15 @@ const Login = () => {
                   className="w-full flex items-center justify-center gap-2"
                   onClick={handleGoogleLogin}
                 >
-                  <FcGoogle className="h-5 w-5" /> Sign in with Google
+                  <FcGoogle className="h-5 w-5" /> {t.auth.signInWithGoogle}
                 </Button>
               </div>
             </CardContent>
             <CardFooter>
               <div className="text-center w-full text-sm">
-                Don't have an account?{" "}
+                {t.auth.dontHaveAccount}{" "}
                 <Link to="/register" className="text-accent font-medium hover:underline">
-                  Create an account
+                  {t.auth.createAccount}
                 </Link>
               </div>
             </CardFooter>

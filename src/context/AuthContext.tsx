@@ -1,8 +1,10 @@
+
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from '@supabase/supabase-js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface AuthContextType {
   user: User | null;
@@ -22,6 +24,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Note: We can't use useTranslation here directly as it would create a circular dependency
+  // We'll pass translations as needed or handle toasts differently
 
   useEffect(() => {
     // Set up the auth state listener

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -13,12 +14,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown, Search, ArrowDownUp } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const RoomListing = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [roomType, setRoomType] = useState<string>('all');
   const [sortOrder, setSortOrder] = useState<'price-low' | 'price-high'>('price-low');
   const [capacity, setCapacity] = useState<number | null>(null);
+  const { t } = useTranslation();
   
   // Ensure all rooms have valid images
   const validatedRooms = rooms.map(room => ({
@@ -64,15 +67,15 @@ const RoomListing = () => {
       <main className="mt-24 pb-16">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-semibold mb-4">Our Rooms</h1>
+            <h1 className="text-3xl md:text-4xl font-semibold mb-4">{t.rooms.ourRooms}</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Find the perfect accommodation that suits your needs, from comfortable dormitories to private rooms.
+              {t.rooms.roomsDescription}
             </p>
           </div>
           
           {/* Search and Filter Section */}
           <div className="mb-8 p-6 bg-card rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-4">Search & Filter</h2>
+            <h2 className="text-lg font-medium mb-4">{t.rooms.searchAndFilter}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {/* Search Input */}
@@ -81,7 +84,7 @@ const RoomListing = () => {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Search rooms by name or features..."
+                    placeholder={t.rooms.searchPlaceholder}
                     className="pl-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -96,13 +99,13 @@ const RoomListing = () => {
                   onValueChange={(value) => setRoomType(value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Room Type" />
+                    <SelectValue placeholder={t.rooms.roomType} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="dorm">Dormitory</SelectItem>
-                    <SelectItem value="private">Private Room</SelectItem>
-                    <SelectItem value="deluxe">Deluxe Room</SelectItem>
+                    <SelectItem value="all">{t.rooms.allTypes}</SelectItem>
+                    <SelectItem value="dorm">{t.rooms.dormitory}</SelectItem>
+                    <SelectItem value="private">{t.rooms.privateRoom}</SelectItem>
+                    <SelectItem value="deluxe">{t.rooms.deluxeRoom}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -114,14 +117,14 @@ const RoomListing = () => {
                   onValueChange={(value) => setCapacity(value === 'any' ? null : parseInt(value))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Capacity" />
+                    <SelectValue placeholder={t.rooms.capacity} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any Capacity</SelectItem>
-                    <SelectItem value="1">1+ Person</SelectItem>
-                    <SelectItem value="2">2+ People</SelectItem>
-                    <SelectItem value="4">4+ People</SelectItem>
-                    <SelectItem value="6">6+ People</SelectItem>
+                    <SelectItem value="any">{t.rooms.anyCapacity}</SelectItem>
+                    <SelectItem value="1">1+ {t.rooms.person}</SelectItem>
+                    <SelectItem value="2">2+ {t.rooms.people}</SelectItem>
+                    <SelectItem value="4">4+ {t.rooms.people}</SelectItem>
+                    <SelectItem value="6">6+ {t.rooms.people}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -135,7 +138,7 @@ const RoomListing = () => {
                 >
                   <span className="flex items-center">
                     <ArrowDownUp className="w-4 h-4 mr-2" />
-                    Price: {sortOrder === 'price-low' ? 'Low to High' : 'High to Low'}
+                    {t.rooms.price}: {sortOrder === 'price-low' ? t.rooms.lowToHigh : t.rooms.highToLow}
                   </span>
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </Button>
@@ -146,7 +149,7 @@ const RoomListing = () => {
           {/* Results Count */}
           <div className="mb-6">
             <p className="text-muted-foreground">
-              Showing {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'}
+              {t.rooms.showing} {filteredRooms.length} {filteredRooms.length === 1 ? t.rooms.room : t.rooms.ourRooms.toLowerCase()}
             </p>
           </div>
           
@@ -159,16 +162,16 @@ const RoomListing = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium mb-2">No rooms match your search criteria</h3>
+              <h3 className="text-lg font-medium mb-2">{t.rooms.noRoomsFound}</h3>
               <p className="text-muted-foreground mb-4">
-                Try adjusting your filters or search term to find available rooms.
+                {t.rooms.noRoomsDescription}
               </p>
               <Button onClick={() => {
                 setSearchQuery('');
                 setRoomType('all');
                 setCapacity(null);
               }}>
-                Reset Filters
+                {t.rooms.resetFilters}
               </Button>
             </div>
           )}

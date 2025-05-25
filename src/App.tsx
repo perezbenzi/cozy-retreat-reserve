@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { LanguageProvider } from "./i18n/LanguageContext";
 import Index from "./pages/Index";
 import RoomListing from "./pages/RoomListing";
 import About from "./pages/About";
@@ -31,71 +32,73 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/rooms" element={<RoomListing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            
-            {/* Allow registration regardless of environment */}
-            <Route path="/register" element={<Register />} />
-            
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/account" element={
-              <ProtectedRoute>
-                <AccountSettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/reservations" element={
-              <ProtectedRoute>
-                <MyReservations />
-              </ProtectedRoute>
-            } />
-            <Route path="/booking/:roomId" element={
-              <ProtectedRoute>
-                <BookingFlow />
-              </ProtectedRoute>
-            } />
-            
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={
-              <ProtectedAdminRoute>
-                <AdminDashboard />
-              </ProtectedAdminRoute>
-            } />
-            
-            <Route path="/admin/bookings" element={
-              <ProtectedAdminRoute>
-                <AdminBookings />
-              </ProtectedAdminRoute>
-            } />
+      <LanguageProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/rooms" element={<RoomListing />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              
+              {/* Allow registration regardless of environment */}
+              <Route path="/register" element={<Register />} />
+              
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/account" element={
+                <ProtectedRoute>
+                  <AccountSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="/reservations" element={
+                <ProtectedRoute>
+                  <MyReservations />
+                </ProtectedRoute>
+              } />
+              <Route path="/booking/:roomId" element={
+                <ProtectedRoute>
+                  <BookingFlow />
+                </ProtectedRoute>
+              } />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              } />
+              
+              <Route path="/admin/bookings" element={
+                <ProtectedAdminRoute>
+                  <AdminBookings />
+                </ProtectedAdminRoute>
+              } />
 
-            <Route path="/admin/users" element={
-              <ProtectedAdminRoute>
-                <AdminUsers />
-              </ProtectedAdminRoute>
-            } />
-            
-            <Route path="/admin/settings" element={
-              <ProtectedAdminRoute>
-                <AdminSettings />
-              </ProtectedAdminRoute>
-            } />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+              <Route path="/admin/users" element={
+                <ProtectedAdminRoute>
+                  <AdminUsers />
+                </ProtectedAdminRoute>
+              } />
+              
+              <Route path="/admin/settings" element={
+                <ProtectedAdminRoute>
+                  <AdminSettings />
+                </ProtectedAdminRoute>
+              } />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

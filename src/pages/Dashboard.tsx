@@ -8,6 +8,7 @@ import { Booking } from '@/types';
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Import refactored components
 import UserProfile from '@/components/dashboard/UserProfile';
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const [userBookings, setUserBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const { t } = useTranslation();
   
   // Fetch user bookings from Supabase
   useEffect(() => {
@@ -141,7 +143,7 @@ const Dashboard = () => {
       
       <main className="mt-16 py-12">
         <div className="container-custom">
-          <h1 className="text-3xl font-semibold mb-8">My Dashboard</h1>
+          <h1 className="text-3xl font-semibold mb-8">{t.dashboard.myDashboard}</h1>
           
           <div className="grid md:grid-cols-3 gap-6">
             {/* Sidebar - User Info */}
@@ -157,13 +159,13 @@ const Dashboard = () => {
             <div className="md:col-span-2">
               <Tabs defaultValue="upcoming">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="upcoming">Upcoming Bookings</TabsTrigger>
-                  <TabsTrigger value="past">Past Bookings</TabsTrigger>
+                  <TabsTrigger value="upcoming">{t.dashboard.upcomingBookings}</TabsTrigger>
+                  <TabsTrigger value="past">{t.dashboard.pastBookings}</TabsTrigger>
                 </TabsList>
                 
                 {isLoading ? (
                   <div className="h-48 flex items-center justify-center">
-                    <p className="text-muted-foreground">Loading your bookings...</p>
+                    <p className="text-muted-foreground">{t.dashboard.loadingBookings}</p>
                   </div>
                 ) : (
                   <>
