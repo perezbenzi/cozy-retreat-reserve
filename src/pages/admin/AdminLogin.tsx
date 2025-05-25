@@ -51,8 +51,7 @@ const AdminLogin = () => {
           hint: error.hint,
           code: error.code
         });
-        toast.error(t.admin.errorVerifyingPermissions);
-        return false;
+        return false; // Block access on error
       }
       
       // Explicitly cast to boolean to ensure we have a definitive true/false
@@ -63,8 +62,7 @@ const AdminLogin = () => {
       return isAdmin;
     } catch (error) {
       console.error("checkAdmin: Excepción:", error);
-      toast.error(t.admin.errorVerifyingPermissions);
-      return false;
+      return false; // Block access on exception
     }
   };
   
@@ -106,21 +104,24 @@ const AdminLogin = () => {
       const isAdmin = await checkAdmin(session.user.id);
       console.log("handleAdminLogin: Resultado verificación admin:", isAdmin);
       
-      if (isAdmin) {
-        console.log("handleAdminLogin: Usuario ES admin, navegando a /admin");
-        navigate('/admin');
-        toast.success(t.admin.welcomeToAdmin);
-      } else {
-        console.log("handleAdminLogin: Usuario NO es admin, navegando a /dashboard");
+      if (!isAdmin) {
+        console.log("handleAdminLogin: Usuario NO es admin, cerrando sesión y bloqueando acceso");
+        // Regular user tried to log in through admin login - sign them out and block
+        await supabase.auth.signOut();
         toast.error(t.admin.noAdminPrivileges);
-        navigate('/dashboard');
+        setIsLoading(false);
+        return;
       }
+      
+      console.log("handleAdminLogin: Usuario ES admin, navegando a /admin");
+      navigate('/admin');
+      toast.success(t.admin.welcomeToAdmin);
       
     } catch (error: any) {
       console.error("handleAdminLogin: Excepción:", error);
       toast.error(error.message || "An error occurred during login");
-    } finally {
       setIsLoading(false);
+    } finally {
       console.log("=== FIN LOGIN ADMIN ===");
     }
   };
