@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -48,6 +47,16 @@ const AccountMenu = () => {
 
     fetchProfile();
   }, [user]);
+
+  const handleLogout = async () => {
+    try {
+      console.log("AccountMenu: Starting logout process");
+      await signOut();
+      console.log("AccountMenu: Logout completed successfully");
+    } catch (error) {
+      console.error("AccountMenu: Error during logout:", error);
+    }
+  };
 
   if (!user) {
     return (
@@ -120,7 +129,7 @@ const AccountMenu = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
-          onClick={() => signOut()}
+          onClick={handleLogout}
           className="flex cursor-pointer items-center text-destructive focus:text-destructive"
         >
           <LogOut className="mr-2 h-4 w-4" />
