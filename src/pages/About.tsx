@@ -1,22 +1,34 @@
+
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Users, Shield, Heart, Leaf, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Check, User, Home, Clock, Phone, MapPin } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
+
 const About = () => {
-  return <>
+  const { t } = useTranslation();
+
+  return (
+    <>
       <Navbar />
       
       <main className="mt-16">
         {/* Hero Section */}
         <section className="relative h-[50vh] min-h-[300px] flex items-center">
           <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Hostel common area" className="w-full h-full object-cover brightness-50" />
+            <img 
+              src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+              alt={t.about.title}
+              className="w-full h-full object-cover brightness-50" 
+            />
           </div>
           <div className="container-custom relative z-10 text-white">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">About TravelStay</h1>
-            <p className="text-xl max-w-2xl">
-              Creating a home away from home for travelers from around the world since 2015
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t.about.title}</h1>
+            <p className="text-xl mb-2">{t.about.subtitle}</p>
+            <p className="text-lg text-white/90">
+              {t.about.description}
             </p>
           </div>
         </section>
@@ -26,157 +38,213 @@ const About = () => {
           <div className="container-custom">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-semibold mb-4">Our Story</h2>
+                <h2 className="text-3xl font-semibold mb-4">{t.about.ourStory}</h2>
                 <p className="text-muted-foreground mb-6">
-                  TravelStay was founded in 2015 with a simple mission: to create a place where travelers can feel at home while exploring new destinations.
+                  {t.about.storyDescription}
                 </p>
-                <p className="text-muted-foreground mb-6">
-                  What started as a small 10-bed hostel has now grown into one of the city's most beloved accommodation options, welcoming thousands of guests from over 100 countries each year.
-                </p>
+                
+                <h3 className="text-2xl font-semibold mb-4">{t.about.ourMission}</h3>
                 <p className="text-muted-foreground">
-                  Our team of passionate travelers understands what makes a great hostel experience, and we're dedicated to providing clean, comfortable, and social spaces that foster connections between guests.
+                  {t.about.missionDescription}
                 </p>
               </div>
-              <div className="rounded-lg overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1100&q=80" alt="TravelStay founders" className="w-full h-auto object-cover" />
+              <div className="grid grid-cols-2 gap-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1551918120-9739cb430c6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1287&q=80" 
+                  alt="Hostel common area" 
+                  className="rounded-lg object-cover h-48 w-full"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1520277739336-7bf67edfa768?ixlib=rb-1.2.1&auto=format&fit=crop&w=1287&q=80" 
+                  alt="Hostel bedroom" 
+                  className="rounded-lg object-cover h-48 w-full"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1523908511403-7fc7b25592f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1287&q=80" 
+                  alt="Hostel kitchen" 
+                  className="rounded-lg object-cover h-48 w-full"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1287&q=80" 
+                  alt="Hostel social area" 
+                  className="rounded-lg object-cover h-48 w-full"
+                />
               </div>
             </div>
           </div>
         </section>
-        
-        {/* Our Values Section */}
+
+        {/* Why Choose Us Section */}
         <section className="section-padding bg-secondary">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Our Values</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                These core principles guide everything we do at TravelStay
-              </p>
+              <h2 className="text-3xl font-semibold mb-4">{t.about.whyChooseUs}</h2>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <User className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Community</h3>
-                <p className="text-muted-foreground">
-                  We believe in creating spaces that foster connection and friendship between travelers from diverse backgrounds.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.primeLocation}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.primeLocationDesc}</p>
+                </CardContent>
+              </Card>
               
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <Home className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Comfort</h3>
-                <p className="text-muted-foreground">
-                  Clean, comfortable accommodations that make you feel at home, no matter how far you've traveled.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Award className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.modernFacilities}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.modernFacilitiesDesc}</p>
+                </CardContent>
+              </Card>
               
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <MapPin className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Local Experience</h3>
-                <p className="text-muted-foreground">
-                  We help our guests discover authentic local experiences beyond the typical tourist attractions.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.vibrantCommunity}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.vibrantCommunityDesc}</p>
+                </CardContent>
+              </Card>
               
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <Check className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Quality</h3>
-                <p className="text-muted-foreground">
-                  We maintain high standards in everything we do, from cleanliness to customer service.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-accent text-xl font-bold">$</span>
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.affordablePrices}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.affordablePricesDesc}</p>
+                </CardContent>
+              </Card>
               
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <Clock className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Flexibility</h3>
-                <p className="text-muted-foreground">
-                  We understand travel plans change, and we strive to be as accommodating as possible.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-accent text-lg font-bold">24/7</span>
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.support247}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.support247Desc}</p>
+                </CardContent>
+              </Card>
               
-              <div className="bg-background p-6 rounded-lg shadow-sm">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-                  <Phone className="text-accent h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-xl mb-2">Responsiveness</h3>
-                <p className="text-muted-foreground">
-                  Our staff is always available to help with questions, recommendations, or assistance.
-                </p>
-              </div>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.safeSecure}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.safeSecureDesc}</p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
-        
-        {/* Our Team Section */}
+
+        {/* Team Section */}
         <section className="section-padding">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Meet Our Team</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.about.meetOurTeam}</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                The friendly faces behind TravelStay
+                {t.about.teamDescription}
               </p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[{
-              name: "Alex Johnson",
-              role: "Founder & Manager",
-              image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-              bio: "Passionate traveler who has visited over 40 countries."
-            }, {
-              name: "Maria Garcia",
-              role: "Guest Relations",
-              image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-              bio: "Always ready with local recommendations and a warm smile."
-            }, {
-              name: "David Kim",
-              role: "Facilities Manager",
-              image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-              bio: "Ensures everything is in perfect working order."
-            }, {
-              name: "Sarah Chen",
-              role: "Events Coordinator",
-              image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-              bio: "Organizes social activities and local tours for our guests."
-            }].map((member, index) => <div key={index} className="bg-background rounded-lg overflow-hidden shadow-sm">
-                  <img src={member.image} alt={member.name} className="w-full h-64 object-cover object-center" />
-                  <div className="p-4">
-                    <h3 className="font-medium text-lg">{member.name}</h3>
-                    <p className="text-accent text-sm mb-2">{member.role}</p>
-                    <p className="text-muted-foreground text-sm">{member.bio}</p>
-                  </div>
-                </div>)}
+              {[
+                { name: "Sarah Johnson", role: t.about.manager, image: "https://images.unsplash.com/photo-1494790108755-2616b612b047?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+                { name: "Mike Chen", role: t.about.receptionist, image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+                { name: "Emma Wilson", role: t.about.coordinator, image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+                { name: "Carlos Rodriguez", role: t.about.housekeeping, image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" }
+              ].map((member, index) => (
+                <Card key={index}>
+                  <CardContent className="p-6 text-center">
+                    <img 
+                      src={member.image} 
+                      alt={member.name}
+                      className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                    />
+                    <h3 className="font-medium text-lg mb-1">{member.name}</h3>
+                    <p className="text-muted-foreground text-sm">{member.role}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
-        
+
+        {/* Values Section */}
+        <section className="section-padding bg-secondary">
+          <div className="container-custom">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-semibold mb-4">{t.about.ourValues}</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Heart className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.hospitalityTitle}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.hospitalityDesc}</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.communityTitle}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.communityDesc}</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Leaf className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.sustainabilityTitle}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.sustainabilityDesc}</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield className="text-accent h-6 w-6" />
+                  </div>
+                  <h3 className="font-medium text-lg mb-2">{t.about.integrityTitle}</h3>
+                  <p className="text-muted-foreground text-sm">{t.about.integrityDesc}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-16 bg-primary text-primary-foreground">
           <div className="container-custom text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4">Come Stay With Us</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4">{t.about.visitUs}</h2>
             <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              Experience our unique hospitality and make memories that will last a lifetime.
+              {t.about.visitUsDescription}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/rooms" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto text-base border ">
-                  Browse Rooms
+                <Button size="lg" className="w-full sm:w-auto">
+                  {t.home.browseRooms}
                 </Button>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" className="border-primary-foreground/70 hover:bg-primary-foreground/20 w-full sm:w-auto text-zinc-950">
-                  Contact Us
+                  {t.nav.contact}
                 </Button>
               </Link>
             </div>
@@ -185,6 +253,8 @@ const About = () => {
       </main>
       
       <Footer />
-    </>;
+    </>
+  );
 };
+
 export default About;

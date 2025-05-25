@@ -1,21 +1,24 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const AdminSettings = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Configuración</h1>
+      <h1 className="text-3xl font-bold">{t.admin.settings}</h1>
       
       <Card>
         <CardHeader>
-          <CardTitle>Configuración del Sistema</CardTitle>
+          <CardTitle>{t.admin.systemSettings}</CardTitle>
           <CardDescription>
-            Administra las configuraciones generales del sistema
+            {t.admin.generalSettings}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Esta sección está en desarrollo y tendrá opciones para configurar el sistema.
+            {t.admin.developmentSection}
           </p>
         </CardContent>
       </Card>

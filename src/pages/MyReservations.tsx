@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, DollarSign, Loader2, Clock, Trash } from "lucide-react";
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Reservation {
   id: string;
@@ -56,6 +57,7 @@ const statusColors: Record<string, string> = {
 
 const MyReservations = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
@@ -79,14 +81,14 @@ const MyReservations = () => {
         setReservations(data || []);
       } catch (error) {
         console.error('Error fetching reservations:', error);
-        toast.error('Failed to load reservations');
+        toast.error(t.reservations.failedToLoad);
       } finally {
         setLoading(false);
       }
     };
     
     fetchReservations();
-  }, [user]);
+  }, [user, t]);
 
   // Format date to readable format
   const formatDate = (dateString: string) => {
@@ -123,10 +125,10 @@ const MyReservations = () => {
         )
       );
       
-      toast.success('Reservation cancelled successfully');
+      toast.success(t.reservations.reservationCancelled);
     } catch (error) {
       console.error('Error cancelling reservation:', error);
-      toast.error('Failed to cancel reservation');
+      toast.error(t.reservations.failedToCancel);
     } finally {
       setCancelling(null);
     }
@@ -142,7 +144,7 @@ const MyReservations = () => {
       
       <main className="mt-16 py-12">
         <div className="container-custom">
-          <h1 className="text-3xl font-semibold mb-8">My Reservations</h1>
+          <h1 className="text-3xl font-semibold mb-8">{t.reservations.title}</h1>
           
           {loading ? (
             <div className="flex justify-center py-16">
@@ -152,10 +154,10 @@ const MyReservations = () => {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <Calendar className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-medium mb-2">No reservations found</h3>
-                <p className="text-muted-foreground mb-6">You haven't made any reservations yet.</p>
+                <h3 className="text-xl font-medium mb-2">{t.reservations.noReservations}</h3>
+                <p className="text-muted-foreground mb-6">{t.reservations.noReservationsDescription}</p>
                 <Button asChild>
-                  <a href="/rooms">Browse Rooms</a>
+                  <a href="/rooms">{t.home.browseRooms}</a>
                 </Button>
               </CardContent>
             </Card>
@@ -164,23 +166,23 @@ const MyReservations = () => {
               {/* Active Reservations */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Upcoming & Active Reservations</CardTitle>
-                  <CardDescription>Your confirmed and pending reservations</CardDescription>
+                  <CardTitle>{t.reservations.upcomingActive}</CardTitle>
+                  <CardDescription>{t.reservations.upcomingActiveDescription}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {activeReservations.length === 0 ? (
-                    <p className="text-center py-6 text-muted-foreground">No active reservations</p>
+                    <p className="text-center py-6 text-muted-foreground">{t.reservations.noActiveReservations}</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Room</TableHead>
-                            <TableHead>Dates</TableHead>
-                            <TableHead>Guests</TableHead>
-                            <TableHead>Total</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t.reservations.room}</TableHead>
+                            <TableHead>{t.reservations.dates}</TableHead>
+                            <TableHead>{t.reservations.guests}</TableHead>
+                            <TableHead>{t.reservations.total}</TableHead>
+                            <TableHead>{t.reservations.status}</TableHead>
+                            <TableHead className="text-right">{t.reservations.actions}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -209,7 +211,7 @@ const MyReservations = () => {
                               </TableCell>
                               <TableCell>
                                 <Badge className={statusColors[reservation.status]}>
-                                  {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
+                                  {t.dashboard[reservation.status as keyof typeof t.dashboard] || reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-right">
@@ -220,26 +222,25 @@ const MyReservations = () => {
                                         <Loader2 className="h-4 w-4 animate-spin" />
                                       ) : (
                                         <>
-                                          <Trash className="h-4 w-4 mr-1" /> Cancel
+                                          <Trash className="h-4 w-4 mr-1" /> {t.reservations.cancelReservation}
                                         </>
                                       )}
                                     </Button>
                                   </AlertDialogTrigger>
                                   <AlertDialogContent>
                                     <AlertDialogHeader>
-                                      <AlertDialogTitle>Cancel Reservation</AlertDialogTitle>
+                                      <AlertDialogTitle>{t.reservations.cancelDialogTitle}</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Are you sure you want to cancel your reservation at {reservation.room_name}? 
-                                        This action cannot be undone.
+                                        {t.reservations.cancelDialogDescription.replace('{roomName}', reservation.room_name)}
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Keep Reservation</AlertDialogCancel>
+                                      <AlertDialogCancel>{t.reservations.keepReservation}</AlertDialogCancel>
                                       <AlertDialogAction
                                         onClick={() => cancelReservation(reservation.id)}
                                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                       >
-                                        Yes, Cancel Reservation
+                                        {t.reservations.confirmCancel}
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
@@ -258,19 +259,19 @@ const MyReservations = () => {
               {cancelledReservations.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Cancelled Reservations</CardTitle>
-                    <CardDescription>Your previously cancelled bookings</CardDescription>
+                    <CardTitle>{t.reservations.cancelled}</CardTitle>
+                    <CardDescription>{t.reservations.cancelledDescription}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Room</TableHead>
-                            <TableHead>Dates</TableHead>
-                            <TableHead>Guests</TableHead>
-                            <TableHead>Total</TableHead>
-                            <TableHead>Cancelled On</TableHead>
+                            <TableHead>{t.reservations.room}</TableHead>
+                            <TableHead>{t.reservations.dates}</TableHead>
+                            <TableHead>{t.reservations.guests}</TableHead>
+                            <TableHead>{t.reservations.total}</TableHead>
+                            <TableHead>{t.reservations.cancelledOn}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>

@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -8,33 +9,42 @@ import TestimonialCard from '@/components/TestimonialCard';
 import AmenityCard from '@/components/AmenityCard';
 import { rooms, testimonials, amenities, galleryImages } from '@/data/roomData';
 import { MapPin } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
+
 const Index = () => {
+  const { t } = useTranslation();
   // Only show 3 featured rooms on homepage
   const featuredRooms = rooms.slice(0, 3);
-  return <>
+
+  return (
+    <>
       <Navbar />
       
       <main className="mt-16">
         {/* Hero Section */}
         <section className="relative h-[85vh] min-h-[500px] flex items-center">
           <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Hostel interior" className="w-full h-full object-cover brightness-50" />
+            <img 
+              src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+              alt="Hostel interior" 
+              className="w-full h-full object-cover brightness-50" 
+            />
           </div>
           <div className="container-custom relative z-10 text-white">
             <div className="max-w-2xl">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-                Experience Comfort & Community
+                {t.home.heroTitle}
               </h1>
               <p className="text-lg sm:text-xl mb-6 text-white/90">
-                Modern, affordable accommodation in the heart of the city. Connect with fellow travelers in our vibrant spaces.
+                {t.home.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/rooms" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto">Browse Rooms</Button>
+                  <Button size="lg" className="w-full sm:w-auto">{t.home.browseRooms}</Button>
                 </Link>
                 <Link to="/booking" className="w-full sm:w-auto">
                   <Button size="lg" variant="outline" className="border-white/70 hover:bg-white/20 w-full sm:w-auto text-zinc-950">
-                    Book Now
+                    {t.home.bookNow}
                   </Button>
                 </Link>
               </div>
@@ -47,19 +57,19 @@ const Index = () => {
           <div className="container-custom">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-semibold mb-4">Welcome to TravelStay</h2>
+                <h2 className="text-3xl font-semibold mb-4">{t.home.welcomeTitle}</h2>
                 <p className="text-muted-foreground mb-4">
-                  Located in the heart of the city, TravelStay offers modern, affordable accommodation for travelers seeking both comfort and authentic local experiences.
+                  {t.home.welcomeDescription1}
                 </p>
                 <p className="text-muted-foreground mb-6">
-                  Our hostel is designed to foster connections between travelers from across the globe while providing the perfect home base for your adventures.
+                  {t.home.welcomeDescription2}
                 </p>
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
                   <MapPin className="w-5 h-5 mr-2 text-accent" />
-                  <span>Just 5 minutes from Central Station and surrounded by restaurants, cafes, and attractions</span>
+                  <span>{t.home.locationInfo}</span>
                 </div>
                 <Link to="/about">
-                  <Button variant="outline">Learn More About Us</Button>
+                  <Button variant="outline">{t.home.learnMore}</Button>
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -76,19 +86,21 @@ const Index = () => {
         <section className="section-padding">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Our Rooms</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.home.featuredRoomsTitle}</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                From comfortable shared dormitories to private rooms, we offer accommodation options to suit every traveler's needs and budget.
+                {t.home.featuredRoomsDescription}
               </p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredRooms.map(room => <RoomCard key={room.id} room={room} />)}
+              {featuredRooms.map((room) => (
+                <RoomCard key={room.id} room={room} />
+              ))}
             </div>
             
             <div className="mt-8 text-center">
               <Link to="/rooms">
-                <Button variant="outline">View All Rooms</Button>
+                <Button variant="outline">{t.home.viewAllRooms}</Button>
               </Link>
             </div>
           </div>
@@ -98,14 +110,16 @@ const Index = () => {
         <section className="section-padding bg-secondary">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Hostel Amenities</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.home.amenitiesTitle}</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Enjoy our range of amenities designed to make your stay comfortable, convenient, and social.
+                {t.home.amenitiesDescription}
               </p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {amenities.map(amenity => <AmenityCard key={amenity.id} amenity={amenity} />)}
+              {amenities.map((amenity) => (
+                <AmenityCard key={amenity.id} amenity={amenity} />
+              ))}
             </div>
           </div>
         </section>
@@ -114,9 +128,9 @@ const Index = () => {
         <section className="section-padding">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Photo Gallery</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.home.galleryTitle}</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Take a visual tour through our hostel spaces, rooms, and common areas.
+                {t.home.galleryDescription}
               </p>
             </div>
             
@@ -128,14 +142,16 @@ const Index = () => {
         <section className="section-padding bg-secondary">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Guest Reviews</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.home.testimonialsTitle}</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Read what our guests have to say about their experiences staying with us.
+                {t.home.testimonialsDescription}
               </p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {testimonials.map(testimonial => <TestimonialCard key={testimonial.id} testimonial={testimonial} />)}
+              {testimonials.map((testimonial) => (
+                <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+              ))}
             </div>
           </div>
         </section>
@@ -144,9 +160,9 @@ const Index = () => {
         <section className="section-padding">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold mb-4">Our Location</h2>
+              <h2 className="text-3xl font-semibold mb-4">{t.home.locationTitle}</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Perfectly situated in the heart of the city, with easy access to public transport, restaurants, and attractions.
+                {t.home.locationDescription}
               </p>
             </div>
             
@@ -155,43 +171,40 @@ const Index = () => {
                 {/* Map placeholder - will be replaced with an actual map */}
                 <div className="w-full h-full bg-gray-300 flex items-center justify-center">
                   <p className="text-muted-foreground">
-                    Map integration will be added via Supabase
+                    {t.home.mapPlaceholder}
                   </p>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-medium mb-4 text-xl">How to Find Us</h3>
+                <h3 className="font-medium mb-4 text-xl">{t.home.howToFindUs}</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-1 text-base">Address</h4>
-                    <p className="text-muted-foreground">
-                      123 Traveler Street, Downtown<br />
-                      City 12345, Country
+                    <h4 className="font-medium mb-1 text-base">{t.home.addressLabel}</h4>
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {t.home.addressText}
                     </p>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-1 text-base">Public Transport</h4>
-                    <p className="text-muted-foreground">
-                      5 minutes walk from Central Station<br />
-                      Bus stops: Lines 10, 32, 45 (City Central stop)
+                    <h4 className="font-medium mb-1 text-base">{t.home.publicTransport}</h4>
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {t.home.publicTransportText}
                     </p>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-1 text-base">From the Airport</h4>
-                    <p className="text-muted-foreground">
-                      Take the Airport Express to Central Station, then a 5-minute walk<br />
-                      Taxi: Approximately 30 minutes (25km)
+                    <h4 className="font-medium mb-1 text-base">{t.home.fromAirport}</h4>
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {t.home.fromAirportText}
                     </p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
                   <Link to="/contact">
-                    <Button>Contact Us for Directions</Button>
+                    <Button>{t.home.contactForDirections}</Button>
                   </Link>
                 </div>
               </div>
@@ -202,19 +215,19 @@ const Index = () => {
         {/* CTA Section */}
         <section className="py-16 bg-primary text-primary-foreground">
           <div className="container-custom text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4">Ready to Book Your Stay?</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4">{t.home.readyToBook}</h2>
             <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              Experience our welcoming atmosphere, comfortable accommodation, and make memories with travelers from around the world.
+              {t.home.readyToBookDescription}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/booking" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto border">
-                  Book Now
+                  {t.home.bookNow}
                 </Button>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" className="border-primary-foreground/70 hover:bg-primary-foreground/20 w-full sm:w-auto text-zinc-950">
-                  Contact Us
+                  {t.nav.contact}
                 </Button>
               </Link>
             </div>
@@ -223,6 +236,8 @@ const Index = () => {
       </main>
       
       <Footer />
-    </>;
+    </>
+  );
 };
+
 export default Index;
