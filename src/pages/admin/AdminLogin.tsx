@@ -28,27 +28,40 @@ const AdminLogin = () => {
   // Check if user is admin - this function must be definitive
   const checkAdmin = async (userId: string) => {
     try {
-      console.log("AdminLogin: Checking admin role for user:", userId);
+      console.log("AdminLogin: === INICIO VERIFICACIÓN ADMIN ===");
+      console.log("AdminLogin: Usuario actual ID:", userId);
+      console.log("AdminLogin: Usuario actual email:", user?.email);
+      
+      console.log("AdminLogin: Llamando has_role con parámetros:", { _role: 'admin' });
       const { data, error } = await supabase
         .rpc('has_role', { _role: 'admin' });
+      
+      console.log("AdminLogin: === RESULTADO RPC has_role ===");
+      console.log("AdminLogin: Data (raw):", data);
+      console.log("AdminLogin: Data (tipo):", typeof data);
+      console.log("AdminLogin: Error:", error);
+      console.log("AdminLogin: ================================");
         
       if (error) {
-        console.error("AdminLogin: Error checking admin role:", error);
+        console.error("AdminLogin: Error en RPC has_role:", error);
+        console.error("AdminLogin: Error details:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         toast.error("Error verifying admin permissions");
         return false;
       }
       
-      // Log the exact response from the has_role function
-      console.log("AdminLogin: Admin check result (raw):", data);
-      console.log("AdminLogin: Admin check result type:", typeof data);
-      
       // Explicitly cast to boolean to ensure we have a definitive true/false
       const isAdmin = Boolean(data);
-      console.log("AdminLogin: Is user admin:", isAdmin);
+      console.log("AdminLogin: Conversión a boolean:", isAdmin);
+      console.log("AdminLogin: === FIN VERIFICACIÓN ADMIN ===");
       
       return isAdmin;
     } catch (error) {
-      console.error("AdminLogin: Failed to check admin role:", error);
+      console.error("AdminLogin: Excepción en checkAdmin:", error);
       toast.error("Error verifying admin permissions");
       return false;
     }
@@ -61,17 +74,21 @@ const AdminLogin = () => {
     setIsLoading(true);
     
     try {
+      console.log("AdminLogin: Iniciando proceso de login admin");
       const { error } = await signIn(email, password);
       
       if (error) {
+        console.error("AdminLogin: Error en signIn:", error);
         toast.error(error.message);
         setIsLoading(false);
         return;
       }
       
+      console.log("AdminLogin: Login exitoso, esperando verificación admin...");
       // Authentication successful, but we need to check for admin role separately
       // This is handled in the effect below when the user state updates
     } catch (error: any) {
+      console.error("AdminLogin: Excepción en handleAdminLogin:", error);
       toast.error(error.message || "An error occurred during login");
       setIsLoading(false);
     }
@@ -81,21 +98,31 @@ const AdminLogin = () => {
   useEffect(() => {
     const verifyAdminStatus = async () => {
       if (user) {
-        console.log("AdminLogin: User logged in, checking admin status:", user.id, user.email);
+        console.log("AdminLogin: === EFECTO useEffect ACTIVADO ===");
+        console.log("AdminLogin: Usuario detectado:", {
+          id: user.id,
+          email: user.email,
+          created_at: user.created_at
+        });
+        
         setIsLoading(true);
         const isAdmin = await checkAdmin(user.id);
         setIsAdminUser(isAdmin);
         
+        console.log("AdminLogin: Resultado final isAdmin:", isAdmin);
+        
         if (isAdmin) {
-          console.log("AdminLogin: User is admin, navigating to admin dashboard");
+          console.log("AdminLogin: Usuario ES admin, navegando a /admin");
           navigate('/admin');
+          toast.success("Bienvenido al panel de administración");
         } else {
-          // If not admin, show error and redirect to regular dashboard
-          console.log("AdminLogin: User is NOT admin, redirecting to dashboard");
+          console.log("AdminLogin: Usuario NO es admin, navegando a /dashboard");
           toast.error("No tienes privilegios de administrador");
           navigate('/dashboard');
         }
         setIsLoading(false);
+      } else {
+        console.log("AdminLogin: No hay usuario logueado");
       }
     };
     
