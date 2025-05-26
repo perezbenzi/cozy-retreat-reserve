@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useAdminStore } from "@/stores/adminStore";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { BookingWithGuest } from "@/types/admin";
 import { Edit, Eye, MoreHorizontal, Trash, CalendarCheck } from "lucide-react";
 import { Booking } from "@/types";
@@ -36,6 +37,7 @@ interface BookingsTableProps {
 }
 
 const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
+  const { t } = useAdminTranslation();
   const { 
     setSelectedBooking, 
     setGuestProfileModalOpen, 
@@ -82,7 +84,7 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
   if (bookings.length === 0) {
     return (
       <div className="text-center py-10">
-        <p className="text-muted-foreground">No bookings found</p>
+        <p className="text-muted-foreground">{t.noBookingsFound}</p>
       </div>
     );
   }
@@ -94,13 +96,13 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
-              <TableHead>Guest</TableHead>
-              <TableHead>Room</TableHead>
-              <TableHead>Check In</TableHead>
-              <TableHead>Check Out</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.guest}</TableHead>
+              <TableHead>{t.room}</TableHead>
+              <TableHead>{t.checkIn}</TableHead>
+              <TableHead>{t.checkOut}</TableHead>
+              <TableHead>{t.status}</TableHead>
+              <TableHead>{t.price}</TableHead>
+              <TableHead className="text-right">{t.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,7 +132,8 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {booking.status}
+                    {booking.status === "confirmed" ? t.confirmed : 
+                     booking.status === "pending" ? t.pending : t.cancelled}
                   </span>
                 </TableCell>
                 <TableCell>${booking.totalPrice}</TableCell>
@@ -142,7 +145,7 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t.actions}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => handleViewBooking(booking)}>
                         <Eye className="mr-2 h-4 w-4" />
@@ -154,7 +157,7 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleViewGuest(booking)}>
                         <CalendarCheck className="mr-2 h-4 w-4" />
-                        View Guest
+                        {t.viewGuest}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem 
