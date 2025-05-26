@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { 
   LayoutDashboard,
   Calendar,
@@ -26,6 +27,7 @@ const AdminSidebar = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useAdminTranslation();
   
   const handleLogout = async () => {
     await signOut();
@@ -38,25 +40,25 @@ const AdminSidebar = () => {
   const menuItems = [
     {
       icon: LayoutDashboard,
-      label: "Dashboard",
+      label: t.dashboard,
       path: "/admin",
       active: location.pathname === "/admin"
     },
     {
       icon: Calendar,
-      label: "Reservas",
+      label: t.bookings,
       path: "/admin/bookings",
       active: isActive("/admin/bookings")
     },
     {
       icon: Users,
-      label: "Usuarios",
+      label: t.users,
       path: "/admin/users",
       active: isActive("/admin/users")
     },
     {
       icon: Settings,
-      label: "Configuración",
+      label: t.settings,
       path: "/admin/settings",
       active: isActive("/admin/settings")
     },
@@ -66,13 +68,13 @@ const AdminSidebar = () => {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center p-4">
-          <span className="text-lg font-semibold">Panel de Administración</span>
+          <span className="text-lg font-semibold">{t.adminPanel}</span>
         </div>
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Gestión</SidebarGroupLabel>
+          <SidebarGroupLabel>{t.management}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -93,10 +95,10 @@ const AdminSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   onClick={handleLogout}
-                  tooltip="Cerrar sesión"
+                  tooltip={t.logout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar sesión</span>
+                  <span>{t.logout}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -106,7 +108,7 @@ const AdminSidebar = () => {
       
       <SidebarFooter>
         <div className="px-4 py-2 text-xs text-muted-foreground">
-          Panel de Administración v1.0
+          {t.version}
         </div>
       </SidebarFooter>
     </Sidebar>
