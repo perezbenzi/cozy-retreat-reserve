@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -10,28 +9,23 @@ import AmenityCard from '@/components/AmenityCard';
 import { rooms, testimonials, amenities, galleryImages } from '@/data/roomData';
 import { MapPin } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
-
 const Index = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   // Only show 3 featured rooms on homepage
   const featuredRooms = rooms.slice(0, 3);
-
-  return (
-    <>
+  return <>
       <Navbar />
       
       <main className="mt-16">
         {/* Hero Section */}
         <section className="relative h-[85vh] min-h-[500px] flex items-center">
           <div className="absolute inset-0 z-0">
-            <img 
-              src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
-              alt="Hostel interior" 
-              className="w-full h-full object-cover brightness-50" 
-            />
+            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Hostel interior" className="w-full h-full object-cover brightness-50" />
           </div>
           <div className="container-custom relative z-10 text-white">
-            <div className="max-w-2xl">
+            <div className="max-w-3xl">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
                 {t.home.heroTitle}
               </h1>
@@ -93,9 +87,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredRooms.map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
+              {featuredRooms.map(room => <RoomCard key={room.id} room={room} />)}
             </div>
             
             <div className="mt-8 text-center">
@@ -117,9 +109,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {amenities.map((amenity) => (
-                <AmenityCard key={amenity.id} amenity={amenity} />
-              ))}
+              {amenities.map(amenity => <AmenityCard key={amenity.id} amenity={amenity} />)}
             </div>
           </div>
         </section>
@@ -149,9 +139,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {testimonials.map((testimonial) => (
-                <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-              ))}
+              {testimonials.map(testimonial => <TestimonialCard key={testimonial.id} testimonial={testimonial} />)}
             </div>
           </div>
         </section>
@@ -236,8 +224,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </>
-  );
+    </>;
 };
-
 export default Index;
