@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,10 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAdminStore } from "@/stores/adminStore";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from "date-fns";
 
 const BookingCalendar = () => {
+  const { t } = useAdminTranslation();
   const { currentDate, setCurrentDate } = useAdminStore();
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -51,13 +52,13 @@ const BookingCalendar = () => {
       <div className="flex items-center justify-between py-2">
         <Button variant="ghost" size="sm" onClick={prevMonth}>
           <ChevronLeft className="h-4 w-4" />
-          Prev
+          {t.prev}
         </Button>
         <h2 className="text-lg font-semibold">
           {format(currentDate, "MMMM yyyy")}
         </h2>
         <Button variant="ghost" size="sm" onClick={nextMonth}>
-          Next
+          {t.next}
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
@@ -139,7 +140,7 @@ const BookingCalendar = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Booking Calendar</CardTitle>
+        <CardTitle>{t.bookingCalendar}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col h-full">

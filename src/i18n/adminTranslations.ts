@@ -61,7 +61,18 @@ export const adminTranslations = {
     price: 'Precio',
     actions: 'Acciones',
     viewGuest: 'Ver Huésped',
-    noBookingsFound: 'No se encontraron reservas'
+    noBookingsFound: 'No se encontraron reservas',
+    // Filters translations
+    searchBookings: 'Buscar reservas, huéspedes...',
+    filterByStatus: 'Filtrar por estado',
+    allStatuses: 'Todos los estados',
+    pickDate: 'Seleccionar fecha',
+    search: 'Buscar',
+    clear: 'Limpiar',
+    // Calendar translations
+    bookingCalendar: 'Calendario de Reservas',
+    prev: 'Anterior',
+    next: 'Siguiente'
   },
   en: {
     settings: 'Settings',
@@ -124,7 +135,18 @@ export const adminTranslations = {
     price: 'Price',
     actions: 'Actions',
     viewGuest: 'View Guest',
-    noBookingsFound: 'No bookings found'
+    noBookingsFound: 'No bookings found',
+    // Filters translations
+    searchBookings: 'Search bookings, guests...',
+    filterByStatus: 'Filter by status',
+    allStatuses: 'All statuses',
+    pickDate: 'Pick a date',
+    search: 'Search',
+    clear: 'Clear',
+    // Calendar translations
+    bookingCalendar: 'Booking Calendar',
+    prev: 'Prev',
+    next: 'Next'
   }
 };
 

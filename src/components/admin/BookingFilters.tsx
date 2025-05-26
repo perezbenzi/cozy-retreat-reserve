@@ -15,8 +15,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useAdminStore } from "@/stores/adminStore";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 
 const BookingFilters = () => {
+  const { t } = useAdminTranslation();
   const { 
     statusFilter, 
     setStatusFilter, 
@@ -62,7 +64,7 @@ const BookingFilters = () => {
         <div className="w-full sm:w-1/3">
           <div className="relative">
             <Input
-              placeholder="Search bookings, guests..."
+              placeholder={t.searchBookings}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -74,13 +76,13 @@ const BookingFilters = () => {
         <div className="w-full sm:w-1/4">
           <Select value={statusFilter} onValueChange={handleStatusChange}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t.filterByStatus} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="all">{t.allStatuses}</SelectItem>
+              <SelectItem value="confirmed">{t.confirmed}</SelectItem>
+              <SelectItem value="pending">{t.pending}</SelectItem>
+              <SelectItem value="cancelled">{t.cancelled}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -96,7 +98,7 @@ const BookingFilters = () => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                {date ? format(date, "PPP") : <span>{t.pickDate}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -112,8 +114,8 @@ const BookingFilters = () => {
         </div>
         
         <div className="flex gap-2 w-full sm:w-auto">
-          <Button onClick={handleSearch}>Search</Button>
-          <Button variant="outline" onClick={handleClearFilters}>Clear</Button>
+          <Button onClick={handleSearch}>{t.search}</Button>
+          <Button variant="outline" onClick={handleClearFilters}>{t.clear}</Button>
         </div>
       </div>
     </div>
