@@ -6,8 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, DollarSign, User, Hotel } from "lucide-react";
 import { BookingWithGuest } from "@/types/admin";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 
 const AdminDashboard = () => {
+  const { t } = useAdminTranslation();
+  
   // Mock queries for dashboard data
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["adminStats"],
@@ -66,29 +69,29 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <h1 className="text-3xl font-bold">{t.dashboard}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard
-          title="Arrivals Today"
+          title={t.arrivalsToday}
           value={statsLoading ? "..." : stats?.arrivalsToday || 0}
           icon={<User className="h-4 w-4" />}
           loading={statsLoading}
         />
         <DashboardCard
-          title="Departures Today"
+          title={t.departuresToday}
           value={statsLoading ? "..." : stats?.departuresToday || 0}
           icon={<Calendar className="h-4 w-4" />}
           loading={statsLoading}
         />
         <DashboardCard
-          title="Occupancy Rate"
+          title={t.occupancyRate}
           value={statsLoading ? "..." : `${stats?.occupancyRate || 0}%`}
           icon={<Hotel className="h-4 w-4" />}
           loading={statsLoading}
         />
         <DashboardCard
-          title="Revenue Today"
+          title={t.revenueToday}
           value={statsLoading ? "..." : `$${stats?.revenueToday || 0}`}
           icon={<DollarSign className="h-4 w-4" />}
           loading={statsLoading}
@@ -97,13 +100,13 @@ const AdminDashboard = () => {
 
       <Tabs defaultValue="recent" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="recent">Recent Bookings</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming Arrivals</TabsTrigger>
+          <TabsTrigger value="recent">{t.recentBookings}</TabsTrigger>
+          <TabsTrigger value="upcoming">{t.upcomingArrivals}</TabsTrigger>
         </TabsList>
         <TabsContent value="recent">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Bookings</CardTitle>
+              <CardTitle>{t.recentBookings}</CardTitle>
             </CardHeader>
             <CardContent>
               <BookingsTable
@@ -116,7 +119,7 @@ const AdminDashboard = () => {
         <TabsContent value="upcoming">
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Arrivals</CardTitle>
+              <CardTitle>{t.upcomingArrivals}</CardTitle>
             </CardHeader>
             <CardContent>
               <BookingsTable

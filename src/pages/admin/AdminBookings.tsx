@@ -7,10 +7,12 @@ import BookingsTable from "@/components/admin/BookingsTable";
 import BookingCalendar from "@/components/admin/BookingCalendar";
 import GuestProfileModal from "@/components/admin/GuestProfileModal";
 import { useAdminStore } from "@/stores/adminStore";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { BookingWithGuest } from "@/types/admin";
 import { GuestProfile } from "@/types/admin";
 
 const AdminBookings = () => {
+  const { t } = useAdminTranslation();
   const { 
     selectedGuestId, 
     isGuestProfileModalOpen, 
@@ -130,12 +132,12 @@ const AdminBookings = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Bookings</h1>
+        <h1 className="text-3xl font-bold">{t.bookings}</h1>
         <div>
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-[240px]">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="list">List View</TabsTrigger>
-              <TabsTrigger value="calendar">Calendar</TabsTrigger>
+              <TabsTrigger value="list">{t.listView}</TabsTrigger>
+              <TabsTrigger value="calendar">{t.calendar}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

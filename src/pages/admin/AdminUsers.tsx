@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, UserPlusIcon } from "lucide-react";
+import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 
 interface UserWithRole {
   id: string;
@@ -28,14 +30,8 @@ interface UserWithRole {
   created_at: string;
 }
 
-// Define a specific interface for Supabase Auth user that won't conflict with any imported User type
-interface AdminAuthUser {
-  id: string;
-  email: string | null;
-  created_at: string;
-}
-
 const AdminUsers = () => {
+  const { t } = useAdminTranslation();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [adminEmail, setAdminEmail] = useState("");
@@ -184,24 +180,24 @@ const AdminUsers = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.userManagement}</h1>
         <Button onClick={fetchUsers} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
+          {t.refresh}
         </Button>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>Promote User to Admin</CardTitle>
+          <CardTitle>{t.promoteUserToAdmin}</CardTitle>
           <CardDescription>
-            Enter a user's email address to grant them admin privileges
+            {t.promoteUserDescription}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={promoteToAdmin} className="flex space-x-2">
             <Input
-              placeholder="user@example.com"
+              placeholder={t.userEmail}
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
               disabled={promoting}
@@ -211,12 +207,12 @@ const AdminUsers = () => {
               {promoting ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> 
-                  Processing
+                  {t.processing}
                 </>
               ) : (
                 <>
                   <UserPlusIcon className="mr-2 h-4 w-4" /> 
-                  Make Admin
+                  {t.makeAdmin}
                 </>
               )}
             </Button>
@@ -226,9 +222,9 @@ const AdminUsers = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Users</CardTitle>
+          <CardTitle>{t.allUsers}</CardTitle>
           <CardDescription>
-            Manage user accounts and permissions
+            {t.manageUsers}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -241,17 +237,17 @@ const AdminUsers = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>User ID</TableHead>
+                    <TableHead>{t.email}</TableHead>
+                    <TableHead>{t.role}</TableHead>
+                    <TableHead>{t.createdAt}</TableHead>
+                    <TableHead>{t.userId}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                        No users found
+                        {t.noUsersFound}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -260,9 +256,9 @@ const AdminUsers = () => {
                         <TableCell>{user.email}</TableCell>
                         <TableCell>
                           {user.isAdmin ? (
-                            <Badge variant="default">Admin</Badge>
+                            <Badge variant="default">{t.admin}</Badge>
                           ) : (
-                            <Badge variant="outline">User</Badge>
+                            <Badge variant="outline">{t.user}</Badge>
                           )}
                         </TableCell>
                         <TableCell>
