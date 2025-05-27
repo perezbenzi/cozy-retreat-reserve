@@ -36,14 +36,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(currentSession?.user ?? null);
         
         if (event === 'SIGNED_IN') {
-          // Only auto-redirect for regular login, not admin login
-          if (location.pathname !== '/admin/login') {
-            console.log("AuthContext: Auto-redirigiendo a dashboard (no es admin login)");
+          // Only auto-redirect for regular login from the login page, not admin login or admin routes
+          if (location.pathname === '/login') {
+            console.log("AuthContext: Auto-redirigiendo a dashboard desde login regular");
             navigate('/dashboard');
             toast.success("Successfully logged in!");
+          } else if (location.pathname === '/admin/login') {
+            console.log("AuthContext: Login desde admin - redirigiendo a admin dashboard");
+            navigate('/admin');
+            toast.success("Successfully logged in!");
           } else {
-            console.log("AuthContext: Login desde admin - NO auto-redirigiendo");
-            // Admin login will handle its own verification and redirection
+            console.log("AuthContext: Login detectado pero no redirigiendo automáticamente desde:", location.pathname);
           }
         }
         
