@@ -19,6 +19,7 @@ const ProtectedAdminRoute = ({
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [checkingRole, setCheckingRole] = useState(true);
+  const [hasAttemptedRedirect, setHasAttemptedRedirect] = useState(false);
   
   // Check admin role immediately when component mounts or user changes
   useEffect(() => {
@@ -29,6 +30,9 @@ const ProtectedAdminRoute = ({
         id: user.id,
         email: user.email
       } : null);
+      
+      // Reset redirect attempt when checking starts
+      setHasAttemptedRedirect(false);
       
       // If no user is logged in, they can't be an admin
       if (!user) {
@@ -70,7 +74,6 @@ const ProtectedAdminRoute = ({
           
           if (!hasAdminRole) {
             console.log("ProtectedAdminRoute: Usuario NO tiene rol admin, preparando redirección");
-            toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
           } else {
             console.log("ProtectedAdminRoute: Usuario SÍ tiene rol admin, acceso permitido");
           }
@@ -85,8 +88,11 @@ const ProtectedAdminRoute = ({
       }
     };
     
-    checkAdminRole();
-  }, [user, requiredRole, navigate]);
+    // Only check admin role if auth is not loading
+    if (!loading) {
+      checkAdminRole();
+    }
+  }, [user, requiredRole, loading]);
 
   // Handle redirections based on auth status and admin role
   useEffect(() => {
@@ -95,15 +101,19 @@ const ProtectedAdminRoute = ({
     console.log("ProtectedAdminRoute: checkingRole:", checkingRole);
     console.log("ProtectedAdminRoute: user:", !!user);
     console.log("ProtectedAdminRoute: isAdmin:", isAdmin);
+    console.log("ProtectedAdminRoute: hasAttemptedRedirect:", hasAttemptedRedirect);
     
     // Only perform redirects after both auth check and role check are complete
-    if (!loading && !checkingRole) {
+    // AND we haven't already attempted a redirect
+    if (!loading && !checkingRole && !hasAttemptedRedirect) {
       if (!user) {
         console.log("ProtectedAdminRoute: Redirigiendo a login admin - no hay usuario");
+        setHasAttemptedRedirect(true);
         toast.error("Debes iniciar sesión para acceder al panel de administración");
         navigate("/admin/login");
       } else if (isAdmin === false) {
         console.log("ProtectedAdminRoute: Redirigiendo a dashboard - usuario no es admin");
+        setHasAttemptedRedirect(true);
         toast.error(`Necesitas permisos de ${requiredRole} para acceder a esta página`);
         navigate("/dashboard");
       } else if (isAdmin === true) {
@@ -111,7 +121,7 @@ const ProtectedAdminRoute = ({
       }
     }
     console.log("ProtectedAdminRoute: === FIN EFECTO REDIRECCIÓN ===");
-  }, [user, loading, navigate, isAdmin, checkingRole, requiredRole]);
+  }, [user, loading, navigate, isAdmin, checkingRole, requiredRole, hasAttemptedRedirect]);
 
   // Show loading state while checking auth or admin status
   if (loading || checkingRole) {
