@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,20 +11,24 @@ import { useAdminStore } from "@/stores/adminStore";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 
 const BookingCalendar = () => {
-  const { t } = useAdminTranslation();
+  const { t, adminLanguage } = useAdminTranslation();
   const { currentDate, setCurrentDate } = useAdminStore();
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
   
+  // Get the correct locale for date-fns
+  const locale = adminLanguage === 'es' ? es : enUS;
+  
   // Mock bookings data - would come from an API in a real application
   const [bookings] = useState([
     {
       id: "1",
-      title: "Room 101",
+      title: adminLanguage === 'es' ? "Habitación 101" : "Room 101",
       start: new Date(2025, 4, 15),
       end: new Date(2025, 4, 18),
       resourceId: "room-101",
@@ -31,7 +36,7 @@ const BookingCalendar = () => {
     },
     {
       id: "2",
-      title: "Room 102",
+      title: adminLanguage === 'es' ? "Habitación 102" : "Room 102",
       start: new Date(2025, 4, 20),
       end: new Date(2025, 4, 25),
       resourceId: "room-102",
@@ -55,7 +60,7 @@ const BookingCalendar = () => {
           {t.prev}
         </Button>
         <h2 className="text-lg font-semibold">
-          {format(currentDate, "MMMM yyyy")}
+          {format(currentDate, "MMMM yyyy", { locale })}
         </h2>
         <Button variant="ghost" size="sm" onClick={nextMonth}>
           {t.next}
@@ -73,7 +78,7 @@ const BookingCalendar = () => {
     for (let i = 0; i < 7; i++) {
       days.push(
         <div className="text-center py-2 font-semibold text-sm" key={i}>
-          {format(addDays(day, i), dateFormat)}
+          {format(addDays(day, i), dateFormat, { locale })}
         </div>
       );
     }
@@ -89,7 +94,7 @@ const BookingCalendar = () => {
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
-        formattedDate = format(day, "d");
+        formattedDate = format(day, "d", { locale });
         const cloneDay = day;
         const dayBookings = bookings.filter(booking => 
           isSameDay(booking.start, day) || 
