@@ -44,6 +44,7 @@ export type Database = {
           guests: number
           id: string
           room_id: string
+          room_image: string | null
           room_name: string
           status: string
           total_price: number
@@ -57,6 +58,7 @@ export type Database = {
           guests: number
           id?: string
           room_id: string
+          room_image?: string | null
           room_name: string
           status?: string
           total_price: number
@@ -70,6 +72,7 @@ export type Database = {
           guests?: number
           id?: string
           room_id?: string
+          room_image?: string | null
           room_name?: string
           status?: string
           total_price?: number
@@ -101,7 +104,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_reservations_view: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string | null
+          guest_avatar: string | null
+          guest_email: string | null
+          guest_name: string | null
+          guests: number | null
+          id: string | null
+          room_id: string | null
+          room_image: string | null
+          room_name: string | null
+          status: string | null
+          total_price: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

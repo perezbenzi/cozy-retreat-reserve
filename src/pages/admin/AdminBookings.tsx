@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BookingFilters from "@/components/admin/BookingFilters";
 import BookingsTable from "@/components/admin/BookingsTable";
@@ -10,6 +10,8 @@ import { useAdminStore } from "@/stores/adminStore";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { BookingWithGuest } from "@/types/admin";
 import { GuestProfile } from "@/types/admin";
+import { adminReservationsService } from "@/services/adminReservationsService";
+import { toast } from "@/components/ui/sonner";
 
 const AdminBookings = () => {
   const { t } = useAdminTranslation();
@@ -20,68 +22,48 @@ const AdminBookings = () => {
   } = useAdminStore();
   
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const queryClient = useQueryClient();
   
-  // Mock query for bookings
-  const { data: bookings, isLoading } = useQuery({
+  // Fetch real reservations from Supabase
+  const { data: bookings, isLoading, error } = useQuery({
     queryKey: ["adminBookings"],
-    queryFn: async () => {
-      // In a real application, this would be an API call
-      return [
-        {
-          id: "1",
-          userId: "user1",
-          roomId: "room101",
-          roomName: "Deluxe King Room",
-          roomImage: "https://images.unsplash.com/photo-1551776235-dde6d482980b?q=80&w=2940&auto=format&fit=crop",
-          checkInDate: "2025-05-15",
-          checkOutDate: "2025-05-18",
-          numberOfGuests: 2,
-          totalPrice: 450,
-          status: "confirmed" as const,
-          createdAt: "2025-05-01",
-          guestName: "John Smith",
-          guestEmail: "john@example.com"
-        },
-        {
-          id: "2",
-          userId: "user2",
-          roomId: "room102",
-          roomName: "Standard Twin Room",
-          roomImage: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=3174&auto=format&fit=crop",
-          checkInDate: "2025-05-20",
-          checkOutDate: "2025-05-25",
-          numberOfGuests: 2,
-          totalPrice: 750,
-          status: "pending" as const,
-          createdAt: "2025-05-02",
-          guestName: "Sarah Johnson",
-          guestEmail: "sarah@example.com"
-        },
-        {
-          id: "3",
-          userId: "user3",
-          roomId: "room103",
-          roomName: "Superior Suite",
-          roomImage: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=3870&auto=format&fit=crop",
-          checkInDate: "2025-05-10",
-          checkOutDate: "2025-05-13",
-          numberOfGuests: 3,
-          totalPrice: 620,
-          status: "cancelled" as const,
-          createdAt: "2025-05-03",
-          guestName: "Michael Brown",
-          guestEmail: "michael@example.com"
-        }
-      ] as BookingWithGuest[];
-    }
+    queryFn: adminReservationsService.getAllReservations,
+    refetchOnWindowFocus: false,
   });
 
-  // Mock query for guest profile
+  // Mutation for updating reservation status
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      adminReservationsService.updateReservationStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
+      toast.success("Reservation status updated successfully");
+    },
+    onError: (error) => {
+      console.error("Error updating reservation:", error);
+      toast.error("Failed to update reservation status");
+    },
+  });
+
+  // Mutation for cancelling reservations
+  const cancelMutation = useMutation({
+    mutationFn: adminReservationsService.cancelReservation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
+      toast.success("Reservation cancelled successfully");
+    },
+    onError: (error) => {
+      console.error("Error cancelling reservation:", error);
+      toast.error("Failed to cancel reservation");
+    },
+  });
+
+  // Mock query for guest profile (to be implemented later)
   const { data: guestProfile, isLoading: guestLoading } = useQuery({
     queryKey: ["guestProfile", selectedGuestId],
     enabled: !!selectedGuestId && isGuestProfileModalOpen,
     queryFn: async () => {
-      // In a real application, this would be an API call
+      // TODO: Implement real guest profile fetching
       return {
         id: selectedGuestId,
         email: "john@example.com",
@@ -93,34 +75,7 @@ const AdminBookings = () => {
         nationality: "United States",
         totalStays: 5,
         totalSpent: 1850,
-        bookingHistory: [
-          {
-            id: "1",
-            userId: selectedGuestId || "",
-            roomId: "room101",
-            roomName: "Deluxe King Room",
-            roomImage: "https://images.unsplash.com/photo-1551776235-dde6d482980b?q=80&w=2940&auto=format&fit=crop",
-            checkInDate: "2025-05-15",
-            checkOutDate: "2025-05-18",
-            numberOfGuests: 2,
-            totalPrice: 450,
-            status: "confirmed" as const,
-            createdAt: "2025-05-01"
-          },
-          {
-            id: "4",
-            userId: selectedGuestId || "",
-            roomId: "room104",
-            roomName: "Standard Double Room",
-            roomImage: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=3174&auto=format&fit=crop",
-            checkInDate: "2025-04-10",
-            checkOutDate: "2025-04-15",
-            numberOfGuests: 2,
-            totalPrice: 600,
-            status: "confirmed" as const,
-            createdAt: "2025-04-01"
-          }
-        ]
+        bookingHistory: [],
       } as GuestProfile;
     }
   });
@@ -128,6 +83,19 @@ const AdminBookings = () => {
   const closeGuestModal = () => {
     setGuestProfileModalOpen(false);
   };
+
+  // Handle errors
+  if (error) {
+    console.error("Error loading reservations:", error);
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">{t.bookings}</h1>
+        <div className="text-center py-10">
+          <p className="text-red-600">Error loading reservations. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -149,6 +117,8 @@ const AdminBookings = () => {
         <BookingsTable
           bookings={bookings || []}
           isLoading={isLoading}
+          onUpdateStatus={updateStatusMutation.mutate}
+          onCancelReservation={cancelMutation.mutate}
         />
       ) : (
         <BookingCalendar />

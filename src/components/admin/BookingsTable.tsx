@@ -21,7 +21,6 @@ import { useAdminStore } from "@/stores/adminStore";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 import { BookingWithGuest } from "@/types/admin";
 import { Edit, Eye, MoreHorizontal, Trash, CalendarCheck } from "lucide-react";
-import { Booking } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -34,9 +33,16 @@ import {
 interface BookingsTableProps {
   bookings: BookingWithGuest[];
   isLoading?: boolean;
+  onUpdateStatus?: (params: { id: string; status: string }) => void;
+  onCancelReservation?: (id: string) => void;
 }
 
-const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
+const BookingsTable = ({ 
+  bookings, 
+  isLoading = false, 
+  onUpdateStatus,
+  onCancelReservation 
+}: BookingsTableProps) => {
   const { t } = useAdminTranslation();
   const { 
     setSelectedBooking, 
@@ -45,7 +51,7 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
   } = useAdminStore();
   
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [bookingToDelete, setBookingToDelete] = useState<Booking | null>(null);
+  const [bookingToDelete, setBookingToDelete] = useState<BookingWithGuest | null>(null);
 
   const handleViewBooking = (booking: BookingWithGuest) => {
     setSelectedBooking(booking);
@@ -67,8 +73,10 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
   };
 
   const handleDeleteBooking = () => {
-    // Logic to delete booking would go here
-    console.log("Deleting booking:", bookingToDelete?.id);
+    if (bookingToDelete && onCancelReservation) {
+      console.log("Cancelling booking:", bookingToDelete.id);
+      onCancelReservation(bookingToDelete.id);
+    }
     setDeleteDialogOpen(false);
     setBookingToDelete(null);
   };
@@ -181,7 +189,7 @@ const BookingsTable = ({ bookings, isLoading = false }: BookingsTableProps) => {
           <DialogHeader>
             <DialogTitle>Cancel Booking</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this booking? This action cannot be undone.
+              Are you sure you want to cancel this booking? This action will mark the booking as cancelled.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
