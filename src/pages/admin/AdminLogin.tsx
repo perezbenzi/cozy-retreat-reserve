@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { Shield } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -26,46 +25,6 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   
-  // Check if user is admin - this function must be definitive
-  const checkAdmin = async (userId: string) => {
-    try {
-      console.log("=== INICIO VERIFICACIÓN ADMIN ===");
-      console.log("checkAdmin: Usuario ID:", userId);
-      console.log("checkAdmin: Usuario email:", user?.email);
-      
-      console.log("checkAdmin: Llamando RPC has_role con parámetros:", { _role: 'admin' });
-      const { data, error } = await supabase
-        .rpc('has_role', { _role: 'admin' });
-      
-      console.log("=== RESULTADO RPC has_role ===");
-      console.log("checkAdmin: Data (raw):", data);
-      console.log("checkAdmin: Data (tipo):", typeof data);
-      console.log("checkAdmin: Error:", error);
-      console.log("================================");
-        
-      if (error) {
-        console.error("checkAdmin: Error en RPC has_role:", error);
-        console.error("checkAdmin: Error details:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-        return false; // Block access on error
-      }
-      
-      // Explicitly cast to boolean to ensure we have a definitive true/false
-      const isAdmin = Boolean(data);
-      console.log("checkAdmin: Conversión a boolean:", isAdmin);
-      console.log("=== FIN VERIFICACIÓN ADMIN ===");
-      
-      return isAdmin;
-    } catch (error) {
-      console.error("checkAdmin: Excepción:", error);
-      return false; // Block access on exception
-    }
-  };
-  
   // Handle admin login
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,62 +32,27 @@ const AdminLogin = () => {
     setIsLoading(true);
     
     try {
-      console.log("=== INICIO LOGIN ADMIN ===");
-      console.log("handleAdminLogin: Iniciando proceso de login admin");
-      console.log("handleAdminLogin: Email:", email);
+      console.log("AdminLogin: Starting admin login process");
       
       const { error } = await signIn(email, password);
       
       if (error) {
-        console.error("handleAdminLogin: Error en signIn:", error);
+        console.error("AdminLogin: Error in signIn:", error);
         toast.error(error.message);
-        setIsLoading(false);
-        return;
       }
-      
-      console.log("handleAdminLogin: Login exitoso, obteniendo sesión actual...");
-      
-      // Get the current session to verify admin immediately
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.user) {
-        console.error("handleAdminLogin: Error obteniendo sesión:", sessionError);
-        toast.error("Error al verificar sesión");
-        setIsLoading(false);
-        return;
-      }
-      
-      console.log("handleAdminLogin: Sesión obtenida, verificando roles para usuario:", session.user.id);
-      
-      // Check if user is admin immediately
-      const isAdmin = await checkAdmin(session.user.id);
-      console.log("handleAdminLogin: Resultado verificación admin:", isAdmin);
-      
-      if (!isAdmin) {
-        console.log("handleAdminLogin: Usuario NO es admin, cerrando sesión y bloqueando acceso");
-        // Regular user tried to log in through admin login - sign them out and block
-        await supabase.auth.signOut();
-        toast.error(t.admin.noAdminPrivileges);
-        setIsLoading(false);
-        return;
-      }
-      
-      console.log("handleAdminLogin: Usuario ES admin, navegando a /admin");
-      navigate('/admin');
-      toast.success(t.admin.welcomeToAdmin);
+      // AuthContext will handle admin verification and redirection
       
     } catch (error: any) {
-      console.error("handleAdminLogin: Excepción:", error);
+      console.error("AdminLogin: Exception:", error);
       toast.error(error.message || "An error occurred during login");
-      setIsLoading(false);
     } finally {
-      console.log("=== FIN LOGIN ADMIN ===");
+      setIsLoading(false);
     }
   };
   
   // If user is already logged in, redirect them
   if (user) {
-    console.log("AdminLogin: Usuario ya logueado, verificando admin...");
+    console.log("AdminLogin: User already logged in, showing loading");
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -137,7 +61,6 @@ const AdminLogin = () => {
     );
   }
   
-  console.log("AdminLogin: Renderizando formulario de login");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">

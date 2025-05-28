@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,9 +18,27 @@ import BookingsTab from '@/components/dashboard/BookingsTab';
 const Dashboard = () => {
   const [userBookings, setUserBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, isAdmin, adminLoading } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
+  // Redirect admins to admin dashboard
+  useEffect(() => {
+    if (!adminLoading && isAdmin === true) {
+      console.log("Dashboard: User is admin, redirecting to admin dashboard");
+      navigate('/admin', { replace: true });
+    }
+  }, [isAdmin, adminLoading, navigate]);
+
+  // Don't render if user is admin (will be redirected)
+  if (!adminLoading && isAdmin === true) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   // Fetch user bookings from Supabase
   useEffect(() => {
     const fetchBookings = async () => {
