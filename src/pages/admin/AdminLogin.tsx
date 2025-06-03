@@ -14,20 +14,44 @@ import {
 } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from '@/context/AuthContext';
-import { Shield } from 'lucide-react';
+import { Shield, AlertCircle } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+import { validateEmail, validateRequired } from '@/utils/validation';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  
   const { user, signIn } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } = {};
+    
+    if (!validateRequired(email)) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    if (!validateRequired(password)) {
+      newErrors.password = 'Password is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
   // Handle admin login
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
     
     setIsLoading(true);
     
@@ -85,8 +109,18 @@ const AdminLogin = () => {
                 placeholder="admin@example.com" 
                 required 
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
+                }}
+                className={errors.email ? 'border-destructive' : ''}
               />
+              {errors.email && (
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.email}
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t.auth.password}</Label>
@@ -96,8 +130,18 @@ const AdminLogin = () => {
                 placeholder="••••••••" 
                 required 
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                }}
+                className={errors.password ? 'border-destructive' : ''}
               />
+              {errors.password && (
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.password}
+                </div>
+              )}
             </div>
             
             <Button type="submit" className="w-full" disabled={isLoading}>

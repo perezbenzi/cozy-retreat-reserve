@@ -1,208 +1,214 @@
 
-import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { useState } from 'react';
+import { MoreHorizontal, Eye, Edit, X, Loader2 } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAdminStore } from "@/stores/adminStore";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AdminReservation } from "@/types/admin";
+import { updateReservationStatus } from "@/services/adminReservationsService";
+import { toast } from "@/components/ui/sonner";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
-import { BookingWithGuest } from "@/types/admin";
-import { Edit, Eye, MoreHorizontal, Trash, CalendarCheck } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface BookingsTableProps {
-  bookings: BookingWithGuest[];
+  bookings: AdminReservation[];
   isLoading?: boolean;
-  onUpdateStatus?: (params: { id: string; status: string }) => void;
-  onCancelReservation?: (id: string) => void;
+  onBookingUpdate?: () => void;
 }
 
-const BookingsTable = ({ 
-  bookings, 
-  isLoading = false, 
-  onUpdateStatus,
-  onCancelReservation 
-}: BookingsTableProps) => {
+const BookingsTable = ({ bookings, isLoading, onBookingUpdate }: BookingsTableProps) => {
   const { t } = useAdminTranslation();
-  const { 
-    setSelectedBooking, 
-    setGuestProfileModalOpen, 
-    setSelectedGuestId 
-  } = useAdminStore();
-  
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [bookingToDelete, setBookingToDelete] = useState<BookingWithGuest | null>(null);
+  const [updatingBookings, setUpdatingBookings] = useState<Set<string>>(new Set());
 
-  const handleViewBooking = (booking: BookingWithGuest) => {
-    setSelectedBooking(booking);
-  };
-
-  const handleEditBooking = (booking: BookingWithGuest) => {
-    setSelectedBooking(booking);
-    // Logic to open edit modal would go here
-  };
-
-  const handleViewGuest = (booking: BookingWithGuest) => {
-    setSelectedGuestId(booking.userId);
-    setGuestProfileModalOpen(true);
-  };
-
-  const confirmDelete = (booking: BookingWithGuest) => {
-    setBookingToDelete(booking);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteBooking = () => {
-    if (bookingToDelete && onCancelReservation) {
-      console.log("Cancelling booking:", bookingToDelete.id);
-      onCancelReservation(bookingToDelete.id);
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'outline';
     }
-    setDeleteDialogOpen(false);
-    setBookingToDelete(null);
+  };
+
+  const handleViewBooking = (booking: AdminReservation) => {
+    // TODO: Implement booking details modal
+    toast.info(`Viewing booking ${booking.id.substring(0, 8)}...`);
+    console.log('Viewing booking:', booking);
+  };
+
+  const handleEditBooking = (booking: AdminReservation) => {
+    // TODO: Implement booking edit functionality
+    toast.info(`Editing booking ${booking.id.substring(0, 8)}...`);
+    console.log('Editing booking:', booking);
+  };
+
+  const handleStatusUpdate = async (bookingId: string, newStatus: string) => {
+    setUpdatingBookings(prev => new Set(prev).add(bookingId));
+    
+    try {
+      await updateReservationStatus(bookingId, newStatus);
+      toast.success(`Booking status updated to ${newStatus}`);
+      onBookingUpdate?.();
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+      toast.error('Failed to update booking status');
+    } finally {
+      setUpdatingBookings(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(bookingId);
+        return newSet;
+      });
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   if (isLoading) {
     return (
-      <div className="w-full h-64 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading bookings...</span>
       </div>
     );
   }
 
-  if (bookings.length === 0) {
+  if (!bookings || bookings.length === 0) {
     return (
-      <div className="text-center py-10">
-        <p className="text-muted-foreground">{t.noBookingsFound}</p>
+      <div className="text-center p-8 text-muted-foreground">
+        No bookings found
       </div>
     );
   }
 
   return (
-    <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>{t.guest}</TableHead>
-              <TableHead>{t.room}</TableHead>
-              <TableHead>{t.checkIn}</TableHead>
-              <TableHead>{t.checkOut}</TableHead>
-              <TableHead>{t.status}</TableHead>
-              <TableHead>{t.price}</TableHead>
-              <TableHead className="text-right">{t.actions}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {bookings.map((booking) => (
-              <TableRow key={booking.id}>
-                <TableCell className="font-medium">{booking.id.slice(0, 8)}...</TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{booking.guestName}</span>
-                    <span className="text-xs text-muted-foreground">{booking.guestEmail}</span>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Guest</TableHead>
+            <TableHead>Room</TableHead>
+            <TableHead>Dates</TableHead>
+            <TableHead>Guests</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {bookings.map((booking) => (
+            <TableRow key={booking.id}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={booking.guest_avatar || undefined} />
+                    <AvatarFallback>
+                      {booking.guest_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="font-medium">{booking.guest_name}</div>
+                    <div className="text-sm text-muted-foreground">{booking.guest_email}</div>
                   </div>
-                </TableCell>
-                <TableCell>{booking.roomName}</TableCell>
-                <TableCell>
-                  {new Date(booking.checkInDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(booking.checkOutDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <span 
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      booking.status === "confirmed" 
-                        ? "bg-green-100 text-green-800" 
-                        : booking.status === "pending" 
-                        ? "bg-yellow-100 text-yellow-800" 
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {booking.status === "confirmed" ? t.confirmed : 
-                     booking.status === "pending" ? t.pending : t.cancelled}
-                  </span>
-                </TableCell>
-                <TableCell>${booking.totalPrice}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>{t.actions}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleViewBooking(booking)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleEditBooking(booking)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Booking
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleViewGuest(booking)}>
-                        <CalendarCheck className="mr-2 h-4 w-4" />
-                        {t.viewGuest}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="font-medium">{booking.room_name}</div>
+                <div className="text-sm text-muted-foreground">
+                  ID: {booking.id.substring(0, 8)}...
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <div>{formatDate(booking.check_in)}</div>
+                  <div className="text-muted-foreground">to {formatDate(booking.check_out)}</div>
+                </div>
+              </TableCell>
+              <TableCell>{booking.guests}</TableCell>
+              <TableCell>
+                <Badge variant={getStatusBadgeVariant(booking.status)}>
+                  {booking.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="font-medium">
+                ${booking.total_price}
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => handleViewBooking(booking)}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      View Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEditBooking(booking)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Booking
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {booking.status !== 'confirmed' && (
                       <DropdownMenuItem 
-                        className="text-red-600" 
-                        onClick={() => confirmDelete(booking)}
+                        onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
+                        disabled={updatingBookings.has(booking.id)}
                       >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Cancel Booking
+                        {updatingBookings.has(booking.id) ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Check className="mr-2 h-4 w-4" />
+                        )}
+                        Confirm
                       </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cancel Booking</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to cancel this booking? This action will mark the booking as cancelled.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteBooking}>
-              Confirm Cancellation
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+                    )}
+                    {booking.status !== 'cancelled' && (
+                      <DropdownMenuItem 
+                        onClick={() => handleStatusUpdate(booking.id, 'cancelled')}
+                        disabled={updatingBookings.has(booking.id)}
+                        className="text-destructive"
+                      >
+                        {updatingBookings.has(booking.id) ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <X className="mr-2 h-4 w-4" />
+                        )}
+                        Cancel
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 
