@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { MoreHorizontal, Eye, Edit, X, Loader2 } from 'lucide-react';
+import { MoreHorizontal, Eye, Edit, X, Loader2, Check } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -21,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AdminReservation } from "@/types/admin";
-import { updateReservationStatus } from "@/services/adminReservationsService";
+import { adminReservationsService } from "@/services/adminReservationsService";
 import { toast } from "@/components/ui/sonner";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
 
@@ -64,7 +63,7 @@ const BookingsTable = ({ bookings, isLoading, onBookingUpdate }: BookingsTablePr
     setUpdatingBookings(prev => new Set(prev).add(bookingId));
     
     try {
-      await updateReservationStatus(bookingId, newStatus);
+      await adminReservationsService.updateReservationStatus(bookingId, newStatus);
       toast.success(`Booking status updated to ${newStatus}`);
       onBookingUpdate?.();
     } catch (error) {

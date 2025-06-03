@@ -74,3 +74,6 @@ export const adminReservationsService = {
     }
   }
 };
+
+// Export individual functions for easier importing
+export const { getAllReservations, updateReservationStatus, cancelReservation } = adminReservationsService;

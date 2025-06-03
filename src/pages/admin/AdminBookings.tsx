@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +7,7 @@ import BookingCalendar from "@/components/admin/BookingCalendar";
 import GuestProfileModal from "@/components/admin/GuestProfileModal";
 import { useAdminStore } from "@/stores/adminStore";
 import { useAdminTranslation } from "@/hooks/useAdminTranslation";
-import { BookingWithGuest } from "@/types/admin";
+import { AdminReservation } from "@/types/admin";
 import { GuestProfile } from "@/types/admin";
 import { adminReservationsService } from "@/services/adminReservationsService";
 import { toast } from "@/components/ui/sonner";
@@ -27,7 +26,27 @@ const AdminBookings = () => {
   // Fetch real reservations from Supabase
   const { data: bookings, isLoading, error } = useQuery({
     queryKey: ["adminBookings"],
-    queryFn: adminReservationsService.getAllReservations,
+    queryFn: async () => {
+      const bookingData = await adminReservationsService.getAllReservations();
+      // Transform BookingWithGuest to AdminReservation for display
+      return bookingData.map(booking => ({
+        id: booking.id,
+        user_id: booking.userId,
+        room_id: booking.roomId,
+        room_name: booking.roomName,
+        room_image: booking.roomImage,
+        check_in: booking.checkInDate,
+        check_out: booking.checkOutDate,
+        guests: booking.numberOfGuests,
+        total_price: booking.totalPrice,
+        status: booking.status,
+        created_at: booking.createdAt,
+        updated_at: booking.createdAt,
+        guest_name: booking.guestName,
+        guest_email: booking.guestEmail,
+        guest_avatar: null
+      })) as AdminReservation[];
+    },
     refetchOnWindowFocus: false,
   });
 
@@ -117,8 +136,7 @@ const AdminBookings = () => {
         <BookingsTable
           bookings={bookings || []}
           isLoading={isLoading}
-          onUpdateStatus={updateStatusMutation.mutate}
-          onCancelReservation={cancelMutation.mutate}
+          onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ["adminBookings"] })}
         />
       ) : (
         <BookingCalendar />
